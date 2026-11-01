@@ -5,7 +5,7 @@ import '../rbac_service.dart';
 import '../session_rbac_extension.dart';
 
 /// Administrative endpoint for managing RBAC roles, permissions, user-role
-/// assignments, and ABAC domains.
+/// assignments, and ABAC domain rules.
 class RbacAdminEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
@@ -17,7 +17,8 @@ class RbacAdminEndpoint extends Endpoint {
     final canManage = await session.rbac.hasPermission('rbac.manage');
     if (!canManage) {
       throw RbacException(
-        message: 'Administrative permission required: "rbac.manage" or superuser',
+        message:
+            'Administrative permission required: "rbac.manage" or superuser',
         reason: RbacExceptionReason.permissionDenied,
         requiredPermission: 'rbac.manage',
         userIdentifier: session.authenticated?.userIdentifier,
@@ -174,22 +175,20 @@ class RbacAdminEndpoint extends Endpoint {
   }
 
   // ==========================================
-  // USER-ROLE & DOMAIN ASSIGNMENTS (Single & Bulk)
+  // USER-ROLE ASSIGNMENTS (Single & Bulk)
   // ==========================================
 
-  /// Assigns a role to a user using [insertRow], optionally scoped to [domain].
+  /// Assigns a role to a user using [insertRow].
   Future<RbacUserRole> assignRoleToUser(
     Session session, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     return RbacService.instance.assignRoleToUser(
       session,
       userIdentifier: userIdentifier,
       roleName: roleName,
-      domain: domain,
     );
   }
 
@@ -198,14 +197,12 @@ class RbacAdminEndpoint extends Endpoint {
     Session session, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     await RbacService.instance.assignRolesToUser(
       session,
       userIdentifier: userIdentifier,
       roleNames: roleNames,
-      domain: domain,
     );
   }
 
@@ -214,46 +211,26 @@ class RbacAdminEndpoint extends Endpoint {
     Session session, {
     required List<String> userIdentifiers,
     required String roleName,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     await RbacService.instance.assignRoleToUsers(
       session,
       userIdentifiers: userIdentifiers,
       roleName: roleName,
-      domain: domain,
     );
   }
 
-  /// Assigns a role to a user across multiple domains in bulk using [insert].
-  Future<void> assignRoleToUserDomains(
-    Session session, {
-    required String userIdentifier,
-    required String roleName,
-    required List<String> domains,
-  }) async {
-    await _checkAdminAccess(session);
-    await RbacService.instance.assignRoleToUserDomains(
-      session,
-      userIdentifier: userIdentifier,
-      roleName: roleName,
-      domains: domains,
-    );
-  }
-
-  /// Removes a role from a user using [deleteRow] or scoped deletion.
+  /// Removes a role from a user using [deleteRow].
   Future<void> removeRoleFromUser(
     Session session, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     await RbacService.instance.removeRoleFromUser(
       session,
       userIdentifier: userIdentifier,
       roleName: roleName,
-      domain: domain,
     );
   }
 
@@ -262,14 +239,12 @@ class RbacAdminEndpoint extends Endpoint {
     Session session, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     await RbacService.instance.removeRolesFromUser(
       session,
       userIdentifier: userIdentifier,
       roleNames: roleNames,
-      domain: domain,
     );
   }
 
@@ -278,28 +253,24 @@ class RbacAdminEndpoint extends Endpoint {
     Session session, {
     String? userIdentifier,
     String? roleName,
-    String? domain,
   }) async {
     await _checkAdminAccess(session);
     return RbacService.instance.listUserRoles(
       session,
       userIdentifier: userIdentifier,
       roleName: roleName,
-      domain: domain,
     );
   }
 
-  /// Gets all roles assigned to a user, optionally filtered by domain.
+  /// Gets all roles assigned to a user.
   Future<List<RbacRole>> getUserRoles(
     Session session,
-    String userIdentifier, {
-    String? domain,
-  }) async {
+    String userIdentifier,
+  ) async {
     await _checkAdminAccess(session);
     return RbacService.instance.getUserRoles(
       session,
       userIdentifier,
-      domain: domain,
     );
   }
 
@@ -316,25 +287,95 @@ class RbacAdminEndpoint extends Endpoint {
   }
 
   // ==========================================
-  // ABAC DOMAIN INSPECTION
+  // ABAC DOMAIN RULES MANAGEMENT
   // ==========================================
 
-  /// Retrieves domains assigned to [userIdentifier], optionally filtered by permission.
-  Future<List<String>> getUserDomains(
+  /// Adds an Odoo-style domain filter rule to a role.
+  Future<RbacDomainRule> addDomainRule(
     Session session, {
-    required String userIdentifier,
+    required String roleName,
+    required String resource,
+    required String filterExpression,
+    String? permission,
+    String? description,
+  }) async {
+    await _checkAdminAccess(session);
+    return AbacService.instance.addDomainRule(
+      session,
+      roleName: roleName,
+      resource: resource,
+      filterExpression: filterExpression,
+      permission: permission,
+      description: description,
+    );
+  }
+
+  /// Adds multiple domain filter rules in bulk.
+  Future<List<RbacDomainRule>> addDomainRules(
+    Session session,
+    List<RbacDomainRule> rules,
+  ) async {
+    await _checkAdminAccess(session);
+    return AbacService.instance.addDomainRules(session, rules);
+  }
+
+  /// Removes a domain filter rule by its ID.
+  Future<void> removeDomainRule(
+    Session session,
+    int ruleId,
+  ) async {
+    await _checkAdminAccess(session);
+    await AbacService.instance.removeDomainRule(session, ruleId);
+  }
+
+  /// Clears domain filter rules for a role, optionally restricted to a specific [resource].
+  Future<void> clearDomainRules(
+    Session session, {
+    required String roleName,
+    String? resource,
     String? permission,
   }) async {
     await _checkAdminAccess(session);
-    if (permission != null) {
-      return AbacService.instance.getDomains(
-        session,
-        permission: permission,
-        userIdentifier: userIdentifier,
-      );
-    }
-    return AbacService.instance.getAllDomains(
+    await AbacService.instance.clearDomainRules(
       session,
+      roleName: roleName,
+      resource: resource,
+      permission: permission,
+    );
+  }
+
+  /// Lists domain filter rules configured for a role.
+  Future<List<RbacDomainRule>> listDomainRules(
+    Session session, {
+    required String roleName,
+    String? resource,
+    String? permission,
+  }) async {
+    await _checkAdminAccess(session);
+    return AbacService.instance.listDomainRules(
+      session,
+      roleName: roleName,
+      resource: resource,
+      permission: permission,
+    );
+  }
+
+  // ==========================================
+  // ABAC DOMAIN INSPECTION FOR USER
+  // ==========================================
+
+  /// Retrieves the domain filter expressions granted to [userIdentifier] for [permission].
+  Future<List<String>> getUserDomainFilters(
+    Session session, {
+    required String userIdentifier,
+    required String permission,
+    String? resource,
+  }) async {
+    await _checkAdminAccess(session);
+    return AbacService.instance.getDomainFilters(
+      session,
+      permission: permission,
+      resource: resource,
       userIdentifier: userIdentifier,
     );
   }
@@ -344,18 +385,28 @@ class RbacAdminEndpoint extends Endpoint {
     Session session, {
     required String userIdentifier,
     required String permission,
+    String? resource,
   }) async {
     await _checkAdminAccess(session);
     return AbacService.instance.getDomainAccess(
       session,
       permission: permission,
+      resource: resource,
       userIdentifier: userIdentifier,
     );
   }
 
-  /// Lists all distinct domains recorded across all user role assignments.
-  Future<List<String>> listAllDomains(Session session) async {
+  /// Retrieves all domain filter expressions across all roles for [userIdentifier].
+  Future<List<String>> getAllUserDomainFilters(
+    Session session, {
+    required String userIdentifier,
+    String? resource,
+  }) async {
     await _checkAdminAccess(session);
-    return AbacService.instance.listAllDomains(session);
+    return AbacService.instance.getAllDomainFilters(
+      session,
+      resource: resource,
+      userIdentifier: userIdentifier,
+    );
   }
 }

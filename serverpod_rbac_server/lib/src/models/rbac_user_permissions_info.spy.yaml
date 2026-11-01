@@ -4,4 +4,3 @@ fields:
   isSuperuser: bool
   roles: List<String>
   permissions: List<String>
-  domains: List<String>

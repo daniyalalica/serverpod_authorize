@@ -1,0 +1,15 @@
+class: RbacDomainRule
+table: serverpod_rbac_domain_rule
+fields:
+  role: RbacRole?, relation(name=role_domain_rules, onDelete=Cascade)
+  resource: String
+  permission: String?
+  filterExpression: String
+  description: String?
+  createdAt: DateTime, default=now
+
+indexes:
+  serverpod_rbac_domain_rule_role_resource_idx:
+    fields: roleId, resource, permission
+  serverpod_rbac_domain_rule_resource_idx:
+    fields: resource

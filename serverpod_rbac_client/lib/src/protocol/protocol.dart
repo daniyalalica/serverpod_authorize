@@ -12,12 +12,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:serverpod_rbac_client/src/protocol/rbac_domain_rule.dart'
+    as _i48gp0es;
 import 'package:serverpod_rbac_client/src/protocol/rbac_permission.dart'
     as _i6wtmqv0;
 import 'package:serverpod_rbac_client/src/protocol/rbac_role.dart' as _iepuelvo;
 import 'package:serverpod_rbac_client/src/protocol/rbac_user_role.dart'
     as _ibcgqhlb;
 import 'rbac_abac_result.dart' as _is9x66yl;
+import 'rbac_domain_rule.dart' as _ita46piq;
 import 'rbac_exception.dart' as _irzd0ivn;
 import 'rbac_exception_reason.dart' as _ilr4m7ck;
 import 'rbac_permission.dart' as _ijqyf5jf;
@@ -26,6 +29,7 @@ import 'rbac_role_permission.dart' as _is7enq59;
 import 'rbac_user_permissions_info.dart' as _icgz0mns;
 import 'rbac_user_role.dart' as _ig5ad0pf;
 export 'rbac_abac_result.dart';
+export 'rbac_domain_rule.dart';
 export 'rbac_exception.dart';
 export 'rbac_exception_reason.dart';
 export 'rbac_permission.dart';
@@ -83,6 +87,9 @@ class Protocol extends _isc.SerializationManager {
     if (t == _is9x66yl.RbacAbacResult) {
       return _is9x66yl.RbacAbacResult.fromJson(data) as T;
     }
+    if (t == _ita46piq.RbacDomainRule) {
+      return _ita46piq.RbacDomainRule.fromJson(data) as T;
+    }
     if (t == _irzd0ivn.RbacException) {
       return _irzd0ivn.RbacException.fromJson(data) as T;
     }
@@ -106,6 +113,10 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _isc.getType<_is9x66yl.RbacAbacResult?>()) {
       return (data != null ? _is9x66yl.RbacAbacResult.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_ita46piq.RbacDomainRule?>()) {
+      return (data != null ? _ita46piq.RbacDomainRule.fromJson(data) : null)
           as T;
     }
     if (t == _isc.getType<_irzd0ivn.RbacException?>()) {
@@ -169,6 +180,20 @@ class Protocol extends _isc.SerializationManager {
               : null)
           as T;
     }
+    if (t == List<_ita46piq.RbacDomainRule>) {
+      return (data as List)
+              .map((e) => deserialize<_ita46piq.RbacDomainRule>(e))
+              .toList()
+          as T;
+    }
+    if (t == _isc.getType<List<_ita46piq.RbacDomainRule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_ita46piq.RbacDomainRule>(e))
+                    .toList()
+              : null)
+          as T;
+    }
     if (t == List<_i6wtmqv0.RbacPermission>) {
       return (data as List)
               .map((e) => deserialize<_i6wtmqv0.RbacPermission>(e))
@@ -193,12 +218,19 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_i48gp0es.RbacDomainRule>) {
+      return (data as List)
+              .map((e) => deserialize<_i48gp0es.RbacDomainRule>(e))
+              .toList()
+          as T;
+    }
     return super.deserialize<T>(data, t);
   }
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
       _is9x66yl.RbacAbacResult => 'RbacAbacResult',
+      _ita46piq.RbacDomainRule => 'RbacDomainRule',
       _irzd0ivn.RbacException => 'RbacException',
       _ilr4m7ck.RbacExceptionReason => 'RbacExceptionReason',
       _ijqyf5jf.RbacPermission => 'RbacPermission',
@@ -225,6 +257,8 @@ class Protocol extends _isc.SerializationManager {
     switch (data) {
       case _is9x66yl.RbacAbacResult():
         return 'RbacAbacResult';
+      case _ita46piq.RbacDomainRule():
+        return 'RbacDomainRule';
       case _irzd0ivn.RbacException():
         return 'RbacException';
       case _ilr4m7ck.RbacExceptionReason():
@@ -251,6 +285,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'RbacAbacResult') {
       return deserialize<_is9x66yl.RbacAbacResult>(data['data']);
+    }
+    if (dataClassName == 'RbacDomainRule') {
+      return deserialize<_ita46piq.RbacDomainRule>(data['data']);
     }
     if (dataClassName == 'RbacException') {
       return deserialize<_irzd0ivn.RbacException>(data['data']);

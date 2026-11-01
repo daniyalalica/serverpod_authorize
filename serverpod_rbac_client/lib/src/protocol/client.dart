@@ -14,6 +14,8 @@ import 'dart:async' as _ida;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:serverpod_rbac_client/src/protocol/rbac_abac_result.dart'
     as _i3qazro9;
+import 'package:serverpod_rbac_client/src/protocol/rbac_domain_rule.dart'
+    as _i48gp0es;
 import 'package:serverpod_rbac_client/src/protocol/rbac_permission.dart'
     as _i6wtmqv0;
 import 'package:serverpod_rbac_client/src/protocol/rbac_role.dart' as _iepuelvo;
@@ -23,7 +25,7 @@ import 'package:serverpod_rbac_client/src/protocol/rbac_user_role.dart'
     as _ibcgqhlb;
 
 /// Administrative endpoint for managing RBAC roles, permissions, user-role
-/// assignments, and ABAC domains.
+/// assignments, and ABAC domain rules.
 /// {@category Endpoint}
 class EndpointRbacAdmin extends _isc.EndpointRef {
   EndpointRbacAdmin(_isc.EndpointCaller caller) : super(caller);
@@ -166,18 +168,16 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
     {'roleName': roleName},
   );
 
-  /// Assigns a role to a user using [insertRow], optionally scoped to [domain].
+  /// Assigns a role to a user using [insertRow].
   _ida.Future<_ibcgqhlb.RbacUserRole> assignRoleToUser({
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) => caller.callServerEndpoint<_ibcgqhlb.RbacUserRole>(
     'serverpod_rbac.rbacAdmin',
     'assignRoleToUser',
     {
       'userIdentifier': userIdentifier,
       'roleName': roleName,
-      'domain': domain,
     },
   );
 
@@ -185,14 +185,12 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
   _ida.Future<void> assignRolesToUser({
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) => caller.callServerEndpoint<void>(
     'serverpod_rbac.rbacAdmin',
     'assignRolesToUser',
     {
       'userIdentifier': userIdentifier,
       'roleNames': roleNames,
-      'domain': domain,
     },
   );
 
@@ -200,44 +198,25 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
   _ida.Future<void> assignRoleToUsers({
     required List<String> userIdentifiers,
     required String roleName,
-    String? domain,
   }) => caller.callServerEndpoint<void>(
     'serverpod_rbac.rbacAdmin',
     'assignRoleToUsers',
     {
       'userIdentifiers': userIdentifiers,
       'roleName': roleName,
-      'domain': domain,
     },
   );
 
-  /// Assigns a role to a user across multiple domains in bulk using [insert].
-  _ida.Future<void> assignRoleToUserDomains({
-    required String userIdentifier,
-    required String roleName,
-    required List<String> domains,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbacAdmin',
-    'assignRoleToUserDomains',
-    {
-      'userIdentifier': userIdentifier,
-      'roleName': roleName,
-      'domains': domains,
-    },
-  );
-
-  /// Removes a role from a user using [deleteRow] or scoped deletion.
+  /// Removes a role from a user using [deleteRow].
   _ida.Future<void> removeRoleFromUser({
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) => caller.callServerEndpoint<void>(
     'serverpod_rbac.rbacAdmin',
     'removeRoleFromUser',
     {
       'userIdentifier': userIdentifier,
       'roleName': roleName,
-      'domain': domain,
     },
   );
 
@@ -245,14 +224,12 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
   _ida.Future<void> removeRolesFromUser({
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) => caller.callServerEndpoint<void>(
     'serverpod_rbac.rbacAdmin',
     'removeRolesFromUser',
     {
       'userIdentifier': userIdentifier,
       'roleNames': roleNames,
-      'domain': domain,
     },
   );
 
@@ -260,29 +237,22 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
   _ida.Future<List<_ibcgqhlb.RbacUserRole>> listUserRoles({
     String? userIdentifier,
     String? roleName,
-    String? domain,
   }) => caller.callServerEndpoint<List<_ibcgqhlb.RbacUserRole>>(
     'serverpod_rbac.rbacAdmin',
     'listUserRoles',
     {
       'userIdentifier': userIdentifier,
       'roleName': roleName,
-      'domain': domain,
     },
   );
 
-  /// Gets all roles assigned to a user, optionally filtered by domain.
-  _ida.Future<List<_iepuelvo.RbacRole>> getUserRoles(
-    String userIdentifier, {
-    String? domain,
-  }) => caller.callServerEndpoint<List<_iepuelvo.RbacRole>>(
-    'serverpod_rbac.rbacAdmin',
-    'getUserRoles',
-    {
-      'userIdentifier': userIdentifier,
-      'domain': domain,
-    },
-  );
+  /// Gets all roles assigned to a user.
+  _ida.Future<List<_iepuelvo.RbacRole>> getUserRoles(String userIdentifier) =>
+      caller.callServerEndpoint<List<_iepuelvo.RbacRole>>(
+        'serverpod_rbac.rbacAdmin',
+        'getUserRoles',
+        {'userIdentifier': userIdentifier},
+      );
 
   /// Inspects the full permissions snapshot for any user.
   _ida.Future<_iratp19g.RbacUserPermissionsInfo> getUserPermissionsInfo({
@@ -293,16 +263,84 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
     {'userIdentifier': userIdentifier},
   );
 
-  /// Retrieves domains assigned to [userIdentifier], optionally filtered by permission.
-  _ida.Future<List<String>> getUserDomains({
-    required String userIdentifier,
+  /// Adds an Odoo-style domain filter rule to a role.
+  _ida.Future<_i48gp0es.RbacDomainRule> addDomainRule({
+    required String roleName,
+    required String resource,
+    required String filterExpression,
     String? permission,
+    String? description,
+  }) => caller.callServerEndpoint<_i48gp0es.RbacDomainRule>(
+    'serverpod_rbac.rbacAdmin',
+    'addDomainRule',
+    {
+      'roleName': roleName,
+      'resource': resource,
+      'filterExpression': filterExpression,
+      'permission': permission,
+      'description': description,
+    },
+  );
+
+  /// Adds multiple domain filter rules in bulk.
+  _ida.Future<List<_i48gp0es.RbacDomainRule>> addDomainRules(
+    List<_i48gp0es.RbacDomainRule> rules,
+  ) => caller.callServerEndpoint<List<_i48gp0es.RbacDomainRule>>(
+    'serverpod_rbac.rbacAdmin',
+    'addDomainRules',
+    {'rules': rules},
+  );
+
+  /// Removes a domain filter rule by its ID.
+  _ida.Future<void> removeDomainRule(int ruleId) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbacAdmin',
+        'removeDomainRule',
+        {'ruleId': ruleId},
+      );
+
+  /// Clears domain filter rules for a role, optionally restricted to a specific [resource].
+  _ida.Future<void> clearDomainRules({
+    required String roleName,
+    String? resource,
+    String? permission,
+  }) => caller.callServerEndpoint<void>(
+    'serverpod_rbac.rbacAdmin',
+    'clearDomainRules',
+    {
+      'roleName': roleName,
+      'resource': resource,
+      'permission': permission,
+    },
+  );
+
+  /// Lists domain filter rules configured for a role.
+  _ida.Future<List<_i48gp0es.RbacDomainRule>> listDomainRules({
+    required String roleName,
+    String? resource,
+    String? permission,
+  }) => caller.callServerEndpoint<List<_i48gp0es.RbacDomainRule>>(
+    'serverpod_rbac.rbacAdmin',
+    'listDomainRules',
+    {
+      'roleName': roleName,
+      'resource': resource,
+      'permission': permission,
+    },
+  );
+
+  /// Retrieves the domain filter expressions granted to [userIdentifier] for [permission].
+  _ida.Future<List<String>> getUserDomainFilters({
+    required String userIdentifier,
+    required String permission,
+    String? resource,
   }) => caller.callServerEndpoint<List<String>>(
     'serverpod_rbac.rbacAdmin',
-    'getUserDomains',
+    'getUserDomainFilters',
     {
       'userIdentifier': userIdentifier,
       'permission': permission,
+      'resource': resource,
     },
   );
 
@@ -310,22 +348,29 @@ class EndpointRbacAdmin extends _isc.EndpointRef {
   _ida.Future<_i3qazro9.RbacAbacResult> getUserDomainAccess({
     required String userIdentifier,
     required String permission,
+    String? resource,
   }) => caller.callServerEndpoint<_i3qazro9.RbacAbacResult>(
     'serverpod_rbac.rbacAdmin',
     'getUserDomainAccess',
     {
       'userIdentifier': userIdentifier,
       'permission': permission,
+      'resource': resource,
     },
   );
 
-  /// Lists all distinct domains recorded across all user role assignments.
-  _ida.Future<List<String>> listAllDomains() =>
-      caller.callServerEndpoint<List<String>>(
-        'serverpod_rbac.rbacAdmin',
-        'listAllDomains',
-        {},
-      );
+  /// Retrieves all domain filter expressions across all roles for [userIdentifier].
+  _ida.Future<List<String>> getAllUserDomainFilters({
+    required String userIdentifier,
+    String? resource,
+  }) => caller.callServerEndpoint<List<String>>(
+    'serverpod_rbac.rbacAdmin',
+    'getAllUserDomainFilters',
+    {
+      'userIdentifier': userIdentifier,
+      'resource': resource,
+    },
+  );
 }
 
 /// Endpoint allowing authenticated clients to inspect their own RBAC permissions,
@@ -344,7 +389,7 @@ class EndpointRbac extends _isc.EndpointRef {
     {},
   );
 
-  /// Retrieves the current authenticated user's permissions, roles, and domains snapshot.
+  /// Retrieves the current authenticated user's permissions and roles snapshot.
   _ida.Future<_iratp19g.RbacUserPermissionsInfo> getMyPermissions() =>
       caller.callServerEndpoint<_iratp19g.RbacUserPermissionsInfo>(
         'serverpod_rbac.rbac',
@@ -353,192 +398,153 @@ class EndpointRbac extends _isc.EndpointRef {
       );
 
   /// Retrieves the current authenticated user's assigned role names.
-  _ida.Future<List<String>> getMyRoles({String? domain}) =>
+  _ida.Future<List<String>> getMyRoles() =>
       caller.callServerEndpoint<List<String>>(
         'serverpod_rbac.rbac',
         'getMyRoles',
-        {'domain': domain},
+        {},
       );
 
-  /// Retrieves the domains granted to the current user, optionally filtered by permission.
-  _ida.Future<List<String>> getMyDomains({String? permission}) =>
-      caller.callServerEndpoint<List<String>>(
-        'serverpod_rbac.rbac',
-        'getMyDomains',
-        {'permission': permission},
-      );
+  /// Checks if access to [permission] requires row-level domain filtering for the current user.
+  _ida.Future<bool> hasDomains(
+    String permission, {
+    String? resource,
+  }) => caller.callServerEndpoint<bool>(
+    'serverpod_rbac.rbac',
+    'hasDomains',
+    {
+      'permission': permission,
+      'resource': resource,
+    },
+  );
 
-  /// Checks if access to [permission] is domain-restricted for the current user.
-  _ida.Future<bool> hasDomains(String permission) =>
-      caller.callServerEndpoint<bool>(
-        'serverpod_rbac.rbac',
-        'hasDomains',
-        {'permission': permission},
-      );
+  /// Retrieves the domain filter expressions granted to the current user for [permission].
+  _ida.Future<List<String>> getMyDomainFilters(
+    String permission, {
+    String? resource,
+  }) => caller.callServerEndpoint<List<String>>(
+    'serverpod_rbac.rbac',
+    'getMyDomainFilters',
+    {
+      'permission': permission,
+      'resource': resource,
+    },
+  );
 
   /// Retrieves full domain access details for [permission] for the current user.
-  _ida.Future<_i3qazro9.RbacAbacResult> getMyDomainAccess(String permission) =>
-      caller.callServerEndpoint<_i3qazro9.RbacAbacResult>(
+  _ida.Future<_i3qazro9.RbacAbacResult> getMyDomainAccess(
+    String permission, {
+    String? resource,
+  }) => caller.callServerEndpoint<_i3qazro9.RbacAbacResult>(
+    'serverpod_rbac.rbac',
+    'getMyDomainAccess',
+    {
+      'permission': permission,
+      'resource': resource,
+    },
+  );
+
+  /// Retrieves all domain filter expressions across all roles for the current user.
+  _ida.Future<List<String>> getMyAllDomainFilters({String? resource}) =>
+      caller.callServerEndpoint<List<String>>(
         'serverpod_rbac.rbac',
-        'getMyDomainAccess',
-        {'permission': permission},
+        'getMyAllDomainFilters',
+        {'resource': resource},
       );
 
   /// Checks if the current authenticated user has a specific permission.
-  _ida.Future<bool> hasPermission(
-    String permission, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
-    'serverpod_rbac.rbac',
-    'hasPermission',
-    {
-      'permission': permission,
-      'domain': domain,
-    },
-  );
+  _ida.Future<bool> hasPermission(String permission) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_rbac.rbac',
+        'hasPermission',
+        {'permission': permission},
+      );
 
   /// Checks if the current authenticated user has all specified permissions.
-  _ida.Future<bool> hasAllPermissions(
-    List<String> permissions, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
-    'serverpod_rbac.rbac',
-    'hasAllPermissions',
-    {
-      'permissions': permissions,
-      'domain': domain,
-    },
-  );
+  _ida.Future<bool> hasAllPermissions(List<String> permissions) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_rbac.rbac',
+        'hasAllPermissions',
+        {'permissions': permissions},
+      );
 
   /// Checks if the current authenticated user has any specified permission.
-  _ida.Future<bool> hasAnyPermission(
-    List<String> permissions, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
-    'serverpod_rbac.rbac',
-    'hasAnyPermission',
-    {
-      'permissions': permissions,
-      'domain': domain,
-    },
-  );
+  _ida.Future<bool> hasAnyPermission(List<String> permissions) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_rbac.rbac',
+        'hasAnyPermission',
+        {'permissions': permissions},
+      );
 
   /// Checks if the current authenticated user has a specific role.
-  _ida.Future<bool> hasRole(
-    String role, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
+  _ida.Future<bool> hasRole(String role) => caller.callServerEndpoint<bool>(
     'serverpod_rbac.rbac',
     'hasRole',
-    {
-      'role': role,
-      'domain': domain,
-    },
+    {'role': role},
   );
 
   /// Checks if the current authenticated user has any specified role.
-  _ida.Future<bool> hasAnyRole(
-    List<String> roles, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
-    'serverpod_rbac.rbac',
-    'hasAnyRole',
-    {
-      'roles': roles,
-      'domain': domain,
-    },
-  );
+  _ida.Future<bool> hasAnyRole(List<String> roles) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_rbac.rbac',
+        'hasAnyRole',
+        {'roles': roles},
+      );
 
   /// Checks if the current authenticated user has all specified roles.
-  _ida.Future<bool> hasAllRoles(
-    List<String> roles, {
-    String? domain,
-  }) => caller.callServerEndpoint<bool>(
-    'serverpod_rbac.rbac',
-    'hasAllRoles',
-    {
-      'roles': roles,
-      'domain': domain,
-    },
-  );
+  _ida.Future<bool> hasAllRoles(List<String> roles) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_rbac.rbac',
+        'hasAllRoles',
+        {'roles': roles},
+      );
 
   /// Enforces that the current authenticated user has [permission].
-  _ida.Future<void> requirePermission(
-    String permission, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbac',
-    'requirePermission',
-    {
-      'permission': permission,
-      'domain': domain,
-    },
-  );
+  _ida.Future<void> requirePermission(String permission) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbac',
+        'requirePermission',
+        {'permission': permission},
+      );
 
   /// Enforces that the current authenticated user has all [permissions].
-  _ida.Future<void> requireAllPermissions(
-    List<String> permissions, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbac',
-    'requireAllPermissions',
-    {
-      'permissions': permissions,
-      'domain': domain,
-    },
-  );
+  _ida.Future<void> requireAllPermissions(List<String> permissions) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbac',
+        'requireAllPermissions',
+        {'permissions': permissions},
+      );
 
   /// Enforces that the current authenticated user has any [permissions].
-  _ida.Future<void> requireAnyPermission(
-    List<String> permissions, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbac',
-    'requireAnyPermission',
-    {
-      'permissions': permissions,
-      'domain': domain,
-    },
-  );
+  _ida.Future<void> requireAnyPermission(List<String> permissions) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbac',
+        'requireAnyPermission',
+        {'permissions': permissions},
+      );
 
   /// Enforces that the current authenticated user has [role].
-  _ida.Future<void> requireRole(
-    String role, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
+  _ida.Future<void> requireRole(String role) => caller.callServerEndpoint<void>(
     'serverpod_rbac.rbac',
     'requireRole',
-    {
-      'role': role,
-      'domain': domain,
-    },
+    {'role': role},
   );
 
   /// Enforces that the current authenticated user has all [roles].
-  _ida.Future<void> requireAllRoles(
-    List<String> roles, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbac',
-    'requireAllRoles',
-    {
-      'roles': roles,
-      'domain': domain,
-    },
-  );
+  _ida.Future<void> requireAllRoles(List<String> roles) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbac',
+        'requireAllRoles',
+        {'roles': roles},
+      );
 
   /// Enforces that the current authenticated user has any [roles].
-  _ida.Future<void> requireAnyRole(
-    List<String> roles, {
-    String? domain,
-  }) => caller.callServerEndpoint<void>(
-    'serverpod_rbac.rbac',
-    'requireAnyRole',
-    {
-      'roles': roles,
-      'domain': domain,
-    },
-  );
+  _ida.Future<void> requireAnyRole(List<String> roles) =>
+      caller.callServerEndpoint<void>(
+        'serverpod_rbac.rbac',
+        'requireAnyRole',
+        {'roles': roles},
+      );
 
   /// Enforces that the current authenticated user is a superuser.
   _ida.Future<void> requireSuperuser() => caller.callServerEndpoint<void>(

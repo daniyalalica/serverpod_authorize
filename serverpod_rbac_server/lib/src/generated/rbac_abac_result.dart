@@ -19,9 +19,10 @@ abstract class RbacAbacResult
     required this.userIdentifier,
     this.permission,
     this.roleName,
+    this.resource,
     required this.isAllowed,
     required this.hasDomains,
-    required this.domains,
+    required this.filterExpressions,
     required this.isUnrestricted,
   });
 
@@ -29,9 +30,10 @@ abstract class RbacAbacResult
     required String userIdentifier,
     String? permission,
     String? roleName,
+    String? resource,
     required bool isAllowed,
     required bool hasDomains,
-    required List<String> domains,
+    required List<String> filterExpressions,
     required bool isUnrestricted,
   }) = _RbacAbacResultImpl;
 
@@ -40,12 +42,13 @@ abstract class RbacAbacResult
       userIdentifier: jsonSerialization['userIdentifier'] as String,
       permission: jsonSerialization['permission'] as String?,
       roleName: jsonSerialization['roleName'] as String?,
+      resource: jsonSerialization['resource'] as String?,
       isAllowed: _is.BoolJsonExtension.fromJson(jsonSerialization['isAllowed']),
       hasDomains: _is.BoolJsonExtension.fromJson(
         jsonSerialization['hasDomains'],
       ),
-      domains: _i0rg5xn1.Protocol().deserialize<List<String>>(
-        jsonSerialization['domains'],
+      filterExpressions: _i0rg5xn1.Protocol().deserialize<List<String>>(
+        jsonSerialization['filterExpressions'],
       ),
       isUnrestricted: _is.BoolJsonExtension.fromJson(
         jsonSerialization['isUnrestricted'],
@@ -59,11 +62,13 @@ abstract class RbacAbacResult
 
   String? roleName;
 
+  String? resource;
+
   bool isAllowed;
 
   bool hasDomains;
 
-  List<String> domains;
+  List<String> filterExpressions;
 
   bool isUnrestricted;
 
@@ -74,9 +79,10 @@ abstract class RbacAbacResult
     String? userIdentifier,
     String? permission,
     String? roleName,
+    String? resource,
     bool? isAllowed,
     bool? hasDomains,
-    List<String>? domains,
+    List<String>? filterExpressions,
     bool? isUnrestricted,
   });
   @override
@@ -86,9 +92,10 @@ abstract class RbacAbacResult
       'userIdentifier': userIdentifier,
       if (permission != null) 'permission': permission,
       if (roleName != null) 'roleName': roleName,
+      if (resource != null) 'resource': resource,
       'isAllowed': isAllowed,
       'hasDomains': hasDomains,
-      'domains': domains.toJson(),
+      'filterExpressions': filterExpressions.toJson(),
       'isUnrestricted': isUnrestricted,
     };
   }
@@ -100,9 +107,10 @@ abstract class RbacAbacResult
       'userIdentifier': userIdentifier,
       if (permission != null) 'permission': permission,
       if (roleName != null) 'roleName': roleName,
+      if (resource != null) 'resource': resource,
       'isAllowed': isAllowed,
       'hasDomains': hasDomains,
-      'domains': domains.toJson(),
+      'filterExpressions': filterExpressions.toJson(),
       'isUnrestricted': isUnrestricted,
     };
   }
@@ -120,17 +128,19 @@ class _RbacAbacResultImpl extends RbacAbacResult {
     required String userIdentifier,
     String? permission,
     String? roleName,
+    String? resource,
     required bool isAllowed,
     required bool hasDomains,
-    required List<String> domains,
+    required List<String> filterExpressions,
     required bool isUnrestricted,
   }) : super._(
          userIdentifier: userIdentifier,
          permission: permission,
          roleName: roleName,
+         resource: resource,
          isAllowed: isAllowed,
          hasDomains: hasDomains,
-         domains: domains,
+         filterExpressions: filterExpressions,
          isUnrestricted: isUnrestricted,
        );
 
@@ -142,18 +152,21 @@ class _RbacAbacResultImpl extends RbacAbacResult {
     String? userIdentifier,
     Object? permission = _Undefined,
     Object? roleName = _Undefined,
+    Object? resource = _Undefined,
     bool? isAllowed,
     bool? hasDomains,
-    List<String>? domains,
+    List<String>? filterExpressions,
     bool? isUnrestricted,
   }) {
     return RbacAbacResult(
       userIdentifier: userIdentifier ?? this.userIdentifier,
       permission: permission is String? ? permission : this.permission,
       roleName: roleName is String? ? roleName : this.roleName,
+      resource: resource is String? ? resource : this.resource,
       isAllowed: isAllowed ?? this.isAllowed,
       hasDomains: hasDomains ?? this.hasDomains,
-      domains: domains ?? this.domains.map((e0) => e0).toList(),
+      filterExpressions:
+          filterExpressions ?? this.filterExpressions.map((e0) => e0).toList(),
       isUnrestricted: isUnrestricted ?? this.isUnrestricted,
     );
   }

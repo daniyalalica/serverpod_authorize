@@ -13,6 +13,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_rbac_server/src/generated/protocol.dart' as _i0rg5xn1;
+import 'rbac_domain_rule.dart' as _ita46piq;
 import 'rbac_role_permission.dart' as _is7enq59;
 import 'rbac_user_role.dart' as _ig5ad0pf;
 
@@ -26,6 +27,7 @@ abstract class RbacRole
     bool? isSystemRole,
     this.permissions,
     this.userRoles,
+    this.domainRules,
     DateTime? createdAt,
   }) : isSuperuser = isSuperuser ?? false,
        isSystemRole = isSystemRole ?? false,
@@ -39,6 +41,7 @@ abstract class RbacRole
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   }) = _RbacRoleImpl;
 
@@ -63,6 +66,11 @@ abstract class RbacRole
           ? null
           : _i0rg5xn1.Protocol().deserialize<List<_ig5ad0pf.RbacUserRole>>(
               jsonSerialization['userRoles'],
+            ),
+      domainRules: jsonSerialization['domainRules'] == null
+          ? null
+          : _i0rg5xn1.Protocol().deserialize<List<_ita46piq.RbacDomainRule>>(
+              jsonSerialization['domainRules'],
             ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
@@ -89,6 +97,8 @@ abstract class RbacRole
 
   List<_ig5ad0pf.RbacUserRole>? userRoles;
 
+  List<_ita46piq.RbacDomainRule>? domainRules;
+
   DateTime createdAt;
 
   @override
@@ -105,6 +115,7 @@ abstract class RbacRole
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   });
   @override
@@ -120,6 +131,8 @@ abstract class RbacRole
         'permissions': permissions?.toJson(valueToJson: (v) => v.toJson()),
       if (userRoles != null)
         'userRoles': userRoles?.toJson(valueToJson: (v) => v.toJson()),
+      if (domainRules != null)
+        'domainRules': domainRules?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
     };
   }
@@ -141,6 +154,10 @@ abstract class RbacRole
         'userRoles': userRoles?.toJson(
           valueToJson: (v) => v.toJsonForProtocol(),
         ),
+      if (domainRules != null)
+        'domainRules': domainRules?.toJson(
+          valueToJson: (v) => v.toJsonForProtocol(),
+        ),
       'createdAt': createdAt.toJson(),
     };
   }
@@ -148,10 +165,12 @@ abstract class RbacRole
   static RbacRoleInclude include({
     _is7enq59.RbacRolePermissionIncludeList? permissions,
     _ig5ad0pf.RbacUserRoleIncludeList? userRoles,
+    _ita46piq.RbacDomainRuleIncludeList? domainRules,
   }) {
     return RbacRoleInclude._(
       permissions: permissions,
       userRoles: userRoles,
+      domainRules: domainRules,
     );
   }
 
@@ -190,6 +209,7 @@ class _RbacRoleImpl extends RbacRole {
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   }) : super._(
          id: id,
@@ -199,6 +219,7 @@ class _RbacRoleImpl extends RbacRole {
          isSystemRole: isSystemRole,
          permissions: permissions,
          userRoles: userRoles,
+         domainRules: domainRules,
          createdAt: createdAt,
        );
 
@@ -214,6 +235,7 @@ class _RbacRoleImpl extends RbacRole {
     bool? isSystemRole,
     Object? permissions = _Undefined,
     Object? userRoles = _Undefined,
+    Object? domainRules = _Undefined,
     DateTime? createdAt,
   }) {
     return RbacRole(
@@ -228,6 +250,9 @@ class _RbacRoleImpl extends RbacRole {
       userRoles: userRoles is List<_ig5ad0pf.RbacUserRole>?
           ? userRoles
           : this.userRoles?.map((e0) => e0.copyWith()).toList(),
+      domainRules: domainRules is List<_ita46piq.RbacDomainRule>?
+          ? domainRules
+          : this.domainRules?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -310,6 +335,10 @@ class RbacRoleTable extends _is.Table<int?> {
 
   _is.ManyRelation<_ig5ad0pf.RbacUserRoleTable>? _userRoles;
 
+  _ita46piq.RbacDomainRuleTable? ___domainRules;
+
+  _is.ManyRelation<_ita46piq.RbacDomainRuleTable>? _domainRules;
+
   late final _is.ColumnDateTime createdAt;
 
   _is7enq59.RbacRolePermissionTable get __permissions {
@@ -337,6 +366,19 @@ class RbacRoleTable extends _is.Table<int?> {
           _ig5ad0pf.RbacUserRoleTable(tableRelation: foreignTableRelation),
     );
     return ___userRoles!;
+  }
+
+  _ita46piq.RbacDomainRuleTable get __domainRules {
+    if (___domainRules != null) return ___domainRules!;
+    ___domainRules = _is.createRelationTable(
+      relationFieldName: '__domainRules',
+      field: RbacRole.t.id,
+      foreignField: _ita46piq.RbacDomainRule.t.roleId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _ita46piq.RbacDomainRuleTable(tableRelation: foreignTableRelation),
+    );
+    return ___domainRules!;
   }
 
   _is.ManyRelation<_is7enq59.RbacRolePermissionTable> get permissions {
@@ -378,6 +420,25 @@ class RbacRoleTable extends _is.Table<int?> {
     return _userRoles!;
   }
 
+  _is.ManyRelation<_ita46piq.RbacDomainRuleTable> get domainRules {
+    if (_domainRules != null) return _domainRules!;
+    var relationTable = _is.createRelationTable(
+      relationFieldName: 'domainRules',
+      field: RbacRole.t.id,
+      foreignField: _ita46piq.RbacDomainRule.t.roleId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _ita46piq.RbacDomainRuleTable(tableRelation: foreignTableRelation),
+    );
+    _domainRules = _is.ManyRelation<_ita46piq.RbacDomainRuleTable>(
+      tableWithRelations: relationTable,
+      table: _ita46piq.RbacDomainRuleTable(
+        tableRelation: relationTable.tableRelation!.lastRelation,
+      ),
+    );
+    return _domainRules!;
+  }
+
   @override
   List<_is.Column> get columns => [
     id,
@@ -396,6 +457,9 @@ class RbacRoleTable extends _is.Table<int?> {
     if (relationField == 'userRoles') {
       return __userRoles;
     }
+    if (relationField == 'domainRules') {
+      return __domainRules;
+    }
     return null;
   }
 }
@@ -404,19 +468,24 @@ class RbacRoleInclude extends _is.IncludeObject {
   RbacRoleInclude._({
     _is7enq59.RbacRolePermissionIncludeList? permissions,
     _ig5ad0pf.RbacUserRoleIncludeList? userRoles,
+    _ita46piq.RbacDomainRuleIncludeList? domainRules,
   }) {
     _permissions = permissions;
     _userRoles = userRoles;
+    _domainRules = domainRules;
   }
 
   _is7enq59.RbacRolePermissionIncludeList? _permissions;
 
   _ig5ad0pf.RbacUserRoleIncludeList? _userRoles;
 
+  _ita46piq.RbacDomainRuleIncludeList? _domainRules;
+
   @override
   Map<String, _is.Include?> get includes => {
     'permissions': _permissions,
     'userRoles': _userRoles,
+    'domainRules': _domainRules,
   };
 
   @override
@@ -899,6 +968,31 @@ class RbacRoleAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [RbacRole] and the given [RbacDomainRule]s
+  /// by setting each [RbacDomainRule]'s foreign key `roleId` to refer to this [RbacRole].
+  Future<void> domainRules(
+    _is.DatabaseSession session,
+    RbacRole rbacRole,
+    List<_ita46piq.RbacDomainRule> rbacDomainRule, {
+    _is.Transaction? transaction,
+  }) async {
+    if (rbacDomainRule.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('rbacDomainRule.id');
+    }
+    if (rbacRole.id == null) {
+      throw ArgumentError.notNull('rbacRole.id');
+    }
+
+    var $rbacDomainRule = rbacDomainRule
+        .map((e) => e.copyWith(roleId: rbacRole.id))
+        .toList();
+    await session.db.update<_ita46piq.RbacDomainRule>(
+      $rbacDomainRule,
+      columns: [_ita46piq.RbacDomainRule.t.roleId],
+      transaction: transaction,
+    );
+  }
 }
 
 class RbacRoleAttachRowRepository {
@@ -946,6 +1040,29 @@ class RbacRoleAttachRowRepository {
     await session.db.updateRow<_ig5ad0pf.RbacUserRole>(
       $rbacUserRole,
       columns: [_ig5ad0pf.RbacUserRole.t.roleId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [RbacRole] and the given [RbacDomainRule]
+  /// by setting the [RbacDomainRule]'s foreign key `roleId` to refer to this [RbacRole].
+  Future<void> domainRules(
+    _is.DatabaseSession session,
+    RbacRole rbacRole,
+    _ita46piq.RbacDomainRule rbacDomainRule, {
+    _is.Transaction? transaction,
+  }) async {
+    if (rbacDomainRule.id == null) {
+      throw ArgumentError.notNull('rbacDomainRule.id');
+    }
+    if (rbacRole.id == null) {
+      throw ArgumentError.notNull('rbacRole.id');
+    }
+
+    var $rbacDomainRule = rbacDomainRule.copyWith(roleId: rbacRole.id);
+    await session.db.updateRow<_ita46piq.RbacDomainRule>(
+      $rbacDomainRule,
+      columns: [_ita46piq.RbacDomainRule.t.roleId],
       transaction: transaction,
     );
   }

@@ -11,6 +11,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _is;
+import 'package:serverpod_rbac_server/src/generated/rbac_domain_rule.dart'
+    as _i4vx2l3o;
 import 'package:serverpod_rbac_server/src/generated/rbac_permission.dart'
     as _i44dc49h;
 import 'package:serverpod_rbac_server/src/generated/rbac_role.dart'
@@ -338,11 +340,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -353,7 +350,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     roleName: params['roleName'],
-                    domain: params['domain'],
                   ),
         ),
         'assignRolesToUser': _is.MethodConnector(
@@ -369,11 +365,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -384,7 +375,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     roleNames: params['roleNames'],
-                    domain: params['domain'],
                   ),
         ),
         'assignRoleToUsers': _is.MethodConnector(
@@ -400,11 +390,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -415,38 +400,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifiers: params['userIdentifiers'],
                     roleName: params['roleName'],
-                    domain: params['domain'],
-                  ),
-        ),
-        'assignRoleToUserDomains': _is.MethodConnector(
-          name: 'assignRoleToUserDomains',
-          params: {
-            'userIdentifier': _is.ParameterDescription(
-              name: 'userIdentifier',
-              type: _is.getType<String>(),
-              nullable: false,
-            ),
-            'roleName': _is.ParameterDescription(
-              name: 'roleName',
-              type: _is.getType<String>(),
-              nullable: false,
-            ),
-            'domains': _is.ParameterDescription(
-              name: 'domains',
-              type: _is.getType<List<String>>(),
-              nullable: false,
-            ),
-          },
-          call:
-              (
-                _is.Session session,
-                Map<String, dynamic> params,
-              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
-                  .assignRoleToUserDomains(
-                    session,
-                    userIdentifier: params['userIdentifier'],
-                    roleName: params['roleName'],
-                    domains: params['domains'],
                   ),
         ),
         'removeRoleFromUser': _is.MethodConnector(
@@ -462,11 +415,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -477,7 +425,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     roleName: params['roleName'],
-                    domain: params['domain'],
                   ),
         ),
         'removeRolesFromUser': _is.MethodConnector(
@@ -493,11 +440,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -508,7 +450,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     roleNames: params['roleNames'],
-                    domain: params['domain'],
                   ),
         ),
         'listUserRoles': _is.MethodConnector(
@@ -524,11 +465,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String?>(),
               nullable: true,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -539,7 +475,6 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     roleName: params['roleName'],
-                    domain: params['domain'],
                   ),
         ),
         'getUserRoles': _is.MethodConnector(
@@ -550,11 +485,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -564,7 +494,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .getUserRoles(
                     session,
                     params['userIdentifier'],
-                    domain: params['domain'],
                   ),
         ),
         'getUserPermissionsInfo': _is.MethodConnector(
@@ -586,13 +515,99 @@ class Endpoints extends _is.EndpointDispatch {
                     userIdentifier: params['userIdentifier'],
                   ),
         ),
-        'getUserDomains': _is.MethodConnector(
-          name: 'getUserDomains',
+        'addDomainRule': _is.MethodConnector(
+          name: 'addDomainRule',
           params: {
-            'userIdentifier': _is.ParameterDescription(
-              name: 'userIdentifier',
+            'roleName': _is.ParameterDescription(
+              name: 'roleName',
               type: _is.getType<String>(),
               nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'filterExpression': _is.ParameterDescription(
+              name: 'filterExpression',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'permission': _is.ParameterDescription(
+              name: 'permission',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+            'description': _is.ParameterDescription(
+              name: 'description',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
+                  .addDomainRule(
+                    session,
+                    roleName: params['roleName'],
+                    resource: params['resource'],
+                    filterExpression: params['filterExpression'],
+                    permission: params['permission'],
+                    description: params['description'],
+                  ),
+        ),
+        'addDomainRules': _is.MethodConnector(
+          name: 'addDomainRules',
+          params: {
+            'rules': _is.ParameterDescription(
+              name: 'rules',
+              type: _is.getType<List<_i4vx2l3o.RbacDomainRule>>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
+                  .addDomainRules(
+                    session,
+                    params['rules'],
+                  ),
+        ),
+        'removeDomainRule': _is.MethodConnector(
+          name: 'removeDomainRule',
+          params: {
+            'ruleId': _is.ParameterDescription(
+              name: 'ruleId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
+                  .removeDomainRule(
+                    session,
+                    params['ruleId'],
+                  ),
+        ),
+        'clearDomainRules': _is.MethodConnector(
+          name: 'clearDomainRules',
+          params: {
+            'roleName': _is.ParameterDescription(
+              name: 'roleName',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
             ),
             'permission': _is.ParameterDescription(
               name: 'permission',
@@ -605,10 +620,73 @@ class Endpoints extends _is.EndpointDispatch {
                 _is.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
-                  .getUserDomains(
+                  .clearDomainRules(
+                    session,
+                    roleName: params['roleName'],
+                    resource: params['resource'],
+                    permission: params['permission'],
+                  ),
+        ),
+        'listDomainRules': _is.MethodConnector(
+          name: 'listDomainRules',
+          params: {
+            'roleName': _is.ParameterDescription(
+              name: 'roleName',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+            'permission': _is.ParameterDescription(
+              name: 'permission',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
+                  .listDomainRules(
+                    session,
+                    roleName: params['roleName'],
+                    resource: params['resource'],
+                    permission: params['permission'],
+                  ),
+        ),
+        'getUserDomainFilters': _is.MethodConnector(
+          name: 'getUserDomainFilters',
+          params: {
+            'userIdentifier': _is.ParameterDescription(
+              name: 'userIdentifier',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'permission': _is.ParameterDescription(
+              name: 'permission',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
+                  .getUserDomainFilters(
                     session,
                     userIdentifier: params['userIdentifier'],
                     permission: params['permission'],
+                    resource: params['resource'],
                   ),
         ),
         'getUserDomainAccess': _is.MethodConnector(
@@ -624,6 +702,11 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
           },
           call:
               (
@@ -634,17 +717,33 @@ class Endpoints extends _is.EndpointDispatch {
                     session,
                     userIdentifier: params['userIdentifier'],
                     permission: params['permission'],
+                    resource: params['resource'],
                   ),
         ),
-        'listAllDomains': _is.MethodConnector(
-          name: 'listAllDomains',
-          params: {},
+        'getAllUserDomainFilters': _is.MethodConnector(
+          name: 'getAllUserDomainFilters',
+          params: {
+            'userIdentifier': _is.ParameterDescription(
+              name: 'userIdentifier',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
           call:
               (
                 _is.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['rbacAdmin'] as _i6tj1yeq.RbacAdminEndpoint)
-                  .listAllDomains(session),
+                  .getAllUserDomainFilters(
+                    session,
+                    userIdentifier: params['userIdentifier'],
+                    resource: params['resource'],
+                  ),
         ),
       },
     );
@@ -674,41 +773,13 @@ class Endpoints extends _is.EndpointDispatch {
         ),
         'getMyRoles': _is.MethodConnector(
           name: 'getMyRoles',
-          params: {
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
-          },
+          params: {},
           call:
               (
                 _is.Session session,
                 Map<String, dynamic> params,
-              ) async =>
-                  (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).getMyRoles(
-                    session,
-                    domain: params['domain'],
-                  ),
-        ),
-        'getMyDomains': _is.MethodConnector(
-          name: 'getMyDomains',
-          params: {
-            'permission': _is.ParameterDescription(
-              name: 'permission',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
-          },
-          call:
-              (
-                _is.Session session,
-                Map<String, dynamic> params,
-              ) async =>
-                  (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).getMyDomains(
-                    session,
-                    permission: params['permission'],
-                  ),
+              ) async => (endpoints['rbac'] as _iuygqbq6.RbacEndpoint)
+                  .getMyRoles(session),
         ),
         'hasDomains': _is.MethodConnector(
           name: 'hasDomains',
@@ -717,6 +788,11 @@ class Endpoints extends _is.EndpointDispatch {
               name: 'permission',
               type: _is.getType<String>(),
               nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
             ),
           },
           call:
@@ -727,6 +803,32 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).hasDomains(
                     session,
                     params['permission'],
+                    resource: params['resource'],
+                  ),
+        ),
+        'getMyDomainFilters': _is.MethodConnector(
+          name: 'getMyDomainFilters',
+          params: {
+            'permission': _is.ParameterDescription(
+              name: 'permission',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbac'] as _iuygqbq6.RbacEndpoint)
+                  .getMyDomainFilters(
+                    session,
+                    params['permission'],
+                    resource: params['resource'],
                   ),
         ),
         'getMyDomainAccess': _is.MethodConnector(
@@ -737,6 +839,11 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
           },
           call:
               (
@@ -746,6 +853,26 @@ class Endpoints extends _is.EndpointDispatch {
                   .getMyDomainAccess(
                     session,
                     params['permission'],
+                    resource: params['resource'],
+                  ),
+        ),
+        'getMyAllDomainFilters': _is.MethodConnector(
+          name: 'getMyAllDomainFilters',
+          params: {
+            'resource': _is.ParameterDescription(
+              name: 'resource',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['rbac'] as _iuygqbq6.RbacEndpoint)
+                  .getMyAllDomainFilters(
+                    session,
+                    resource: params['resource'],
                   ),
         ),
         'hasPermission': _is.MethodConnector(
@@ -756,11 +883,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -770,7 +892,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).hasPermission(
                     session,
                     params['permission'],
-                    domain: params['domain'],
                   ),
         ),
         'hasAllPermissions': _is.MethodConnector(
@@ -781,11 +902,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -795,7 +911,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .hasAllPermissions(
                     session,
                     params['permissions'],
-                    domain: params['domain'],
                   ),
         ),
         'hasAnyPermission': _is.MethodConnector(
@@ -806,11 +921,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -820,7 +930,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .hasAnyPermission(
                     session,
                     params['permissions'],
-                    domain: params['domain'],
                   ),
         ),
         'hasRole': _is.MethodConnector(
@@ -831,11 +940,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -844,7 +948,6 @@ class Endpoints extends _is.EndpointDispatch {
               ) async => (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).hasRole(
                 session,
                 params['role'],
-                domain: params['domain'],
               ),
         ),
         'hasAnyRole': _is.MethodConnector(
@@ -855,11 +958,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -869,7 +967,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).hasAnyRole(
                     session,
                     params['roles'],
-                    domain: params['domain'],
                   ),
         ),
         'hasAllRoles': _is.MethodConnector(
@@ -880,11 +977,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -894,7 +986,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).hasAllRoles(
                     session,
                     params['roles'],
-                    domain: params['domain'],
                   ),
         ),
         'requirePermission': _is.MethodConnector(
@@ -905,11 +996,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -919,7 +1005,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .requirePermission(
                     session,
                     params['permission'],
-                    domain: params['domain'],
                   ),
         ),
         'requireAllPermissions': _is.MethodConnector(
@@ -930,11 +1015,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -944,7 +1024,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .requireAllPermissions(
                     session,
                     params['permissions'],
-                    domain: params['domain'],
                   ),
         ),
         'requireAnyPermission': _is.MethodConnector(
@@ -955,11 +1034,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -969,7 +1043,6 @@ class Endpoints extends _is.EndpointDispatch {
                   .requireAnyPermission(
                     session,
                     params['permissions'],
-                    domain: params['domain'],
                   ),
         ),
         'requireRole': _is.MethodConnector(
@@ -980,11 +1053,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<String>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -994,7 +1062,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).requireRole(
                     session,
                     params['role'],
-                    domain: params['domain'],
                   ),
         ),
         'requireAllRoles': _is.MethodConnector(
@@ -1005,11 +1072,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -1019,7 +1081,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).requireAllRoles(
                     session,
                     params['roles'],
-                    domain: params['domain'],
                   ),
         ),
         'requireAnyRole': _is.MethodConnector(
@@ -1030,11 +1091,6 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<List<String>>(),
               nullable: false,
             ),
-            'domain': _is.ParameterDescription(
-              name: 'domain',
-              type: _is.getType<String?>(),
-              nullable: true,
-            ),
           },
           call:
               (
@@ -1044,7 +1100,6 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['rbac'] as _iuygqbq6.RbacEndpoint).requireAnyRole(
                     session,
                     params['roles'],
-                    domain: params['domain'],
                   ),
         ),
         'requireSuperuser': _is.MethodConnector(

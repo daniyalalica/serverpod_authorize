@@ -29,69 +29,85 @@ class SessionRbacContext {
   /// Checks if the current session user has superuser privileges.
   Future<bool> isSuperuser() => RbacService.instance.isSuperuser(session);
 
-  /// Checks if the current session user has a specific permission, optionally scoped to [domain].
-  Future<bool> hasPermission(String permission, {String? domain}) =>
-      RbacService.instance.hasPermission(session, permission, domain: domain);
+  /// Checks if the current session user has a specific permission.
+  Future<bool> hasPermission(String permission) =>
+      RbacService.instance.hasPermission(session, permission);
 
   /// Checks if the current session user has ALL of the specified permissions.
-  Future<bool> hasAllPermissions(List<String> permissions, {String? domain}) =>
-      RbacService.instance.hasAllPermissions(session, permissions, domain: domain);
+  Future<bool> hasAllPermissions(List<String> permissions) =>
+      RbacService.instance.hasAllPermissions(session, permissions);
 
   /// Checks if the current session user has AT LEAST ONE of the specified permissions.
-  Future<bool> hasAnyPermission(List<String> permissions, {String? domain}) =>
-      RbacService.instance.hasAnyPermission(session, permissions, domain: domain);
+  Future<bool> hasAnyPermission(List<String> permissions) =>
+      RbacService.instance.hasAnyPermission(session, permissions);
 
-  /// Checks if the current session user has a specific role, optionally scoped to [domain].
-  Future<bool> hasRole(String roleName, {String? domain}) =>
-      RbacService.instance.hasRole(session, roleName, domain: domain);
+  /// Checks if the current session user has a specific role.
+  Future<bool> hasRole(String roleName) =>
+      RbacService.instance.hasRole(session, roleName);
 
   /// Checks if the current session user has AT LEAST ONE of the specified roles.
-  Future<bool> hasAnyRole(List<String> roleNames, {String? domain}) =>
-      RbacService.instance.hasAnyRole(session, roleNames, domain: domain);
+  Future<bool> hasAnyRole(List<String> roleNames) =>
+      RbacService.instance.hasAnyRole(session, roleNames);
 
   /// Checks if the current session user has ALL of the specified roles.
-  Future<bool> hasAllRoles(List<String> roleNames, {String? domain}) =>
-      RbacService.instance.hasAllRoles(session, roleNames, domain: domain);
+  Future<bool> hasAllRoles(List<String> roleNames) =>
+      RbacService.instance.hasAllRoles(session, roleNames);
 
   /// Enforces that the current session user has [permission], throwing [RbacException] if denied.
-  Future<void> requirePermission(String permission, {String? domain}) =>
-      RbacService.instance.requirePermission(session, permission, domain: domain);
+  Future<void> requirePermission(String permission) =>
+      RbacService.instance.requirePermission(session, permission);
 
   /// Enforces that the current session user has ALL of [permissions].
-  Future<void> requireAllPermissions(List<String> permissions, {String? domain}) =>
-      RbacService.instance.requireAllPermissions(session, permissions, domain: domain);
+  Future<void> requireAllPermissions(List<String> permissions) =>
+      RbacService.instance.requireAllPermissions(session, permissions);
 
   /// Enforces that the current session user has AT LEAST ONE of [permissions].
-  Future<void> requireAnyPermission(List<String> permissions, {String? domain}) =>
-      RbacService.instance.requireAnyPermission(session, permissions, domain: domain);
+  Future<void> requireAnyPermission(List<String> permissions) =>
+      RbacService.instance.requireAnyPermission(session, permissions);
 
   /// Enforces that the current session user has [roleName].
-  Future<void> requireRole(String roleName, {String? domain}) =>
-      RbacService.instance.requireRole(session, roleName, domain: domain);
+  Future<void> requireRole(String roleName) =>
+      RbacService.instance.requireRole(session, roleName);
 
   /// Enforces that the current session user has ALL of [roleNames].
-  Future<void> requireAllRoles(List<String> roleNames, {String? domain}) =>
-      RbacService.instance.requireAllRoles(session, roleNames, domain: domain);
+  Future<void> requireAllRoles(List<String> roleNames) =>
+      RbacService.instance.requireAllRoles(session, roleNames);
 
   /// Enforces that the current session has any of [roleNames].
-  Future<void> requireAnyRole(List<String> roleNames, {String? domain}) =>
-      RbacService.instance.requireAnyRole(session, roleNames, domain: domain);
+  Future<void> requireAnyRole(List<String> roleNames) =>
+      RbacService.instance.requireAnyRole(session, roleNames);
 
   /// Enforces that the current session user has superuser privileges.
   Future<void> requireSuperuser() =>
       RbacService.instance.requireSuperuser(session);
 
-  /// Checks if access to [permission] is domain-restricted for the current user.
-  Future<bool> hasDomains(String permission) =>
-      AbacService.instance.hasDomains(session, permission: permission);
+  /// Checks if access to [permission] requires row-level domain filtering.
+  Future<bool> hasDomains(String permission, {String? resource}) =>
+      AbacService.instance.hasDomains(
+        session,
+        permission: permission,
+        resource: resource,
+      );
 
-  /// Returns the stored domains granted for [permission] to the current user.
-  Future<List<String>> getDomains(String permission) =>
-      AbacService.instance.getDomains(session, permission: permission);
+  /// Returns the stored Odoo-style JSON domain filter expressions for [permission].
+  Future<List<String>> getDomainFilters(
+    String permission, {
+    String? resource,
+  }) => AbacService.instance.getDomainFilters(
+    session,
+    permission: permission,
+    resource: resource,
+  );
 
-  /// Returns full domain access information for [permission].
-  Future<RbacAbacResult> getDomainAccess(String permission) =>
-      AbacService.instance.getDomainAccess(session, permission: permission);
+  /// Returns full ABAC domain evaluation for [permission].
+  Future<RbacAbacResult> getDomainAccess(
+    String permission, {
+    String? resource,
+  }) => AbacService.instance.getDomainAccess(
+    session,
+    permission: permission,
+    resource: resource,
+  );
 
   /// Returns all resolved permissions for the current user.
   Future<Set<String>> getAllPermissions() async {
@@ -105,13 +121,12 @@ class SessionRbacContext {
   }
 
   /// Returns all assigned role names for the current user.
-  Future<List<String>> getRoles({String? domain}) async {
+  Future<List<String>> getRoles() async {
     final uid = userIdentifier;
     if (uid == null) return [];
     final roles = await RbacService.instance.getUserRoles(
       session,
       uid,
-      domain: domain,
     );
     return roles.map((r) => r.name).toList();
   }
@@ -136,30 +151,52 @@ class SessionAbacContext {
   SessionAbacContext(this.session);
 
   /// Checks if access to [permission] is restricted to specific domains.
-  Future<bool> hasDomains(String permission) =>
-      AbacService.instance.hasDomains(session, permission: permission);
+  Future<bool> hasDomains(String permission, {String? resource}) =>
+      AbacService.instance.hasDomains(
+        session,
+        permission: permission,
+        resource: resource,
+      );
 
-  /// Returns the domains granted for [permission] to the current user.
-  Future<List<String>> getDomains(String permission) =>
-      AbacService.instance.getDomains(session, permission: permission);
+  /// Returns the domain filter expressions granted for [permission] to the current user.
+  Future<List<String>> getDomainFilters(
+    String permission, {
+    String? resource,
+  }) => AbacService.instance.getDomainFilters(
+    session,
+    permission: permission,
+    resource: resource,
+  );
 
   /// Returns domain evaluation details for [permission].
-  Future<RbacAbacResult> getDomainAccess(String permission) =>
-      AbacService.instance.getDomainAccess(session, permission: permission);
+  Future<RbacAbacResult> getDomainAccess(
+    String permission, {
+    String? resource,
+  }) => AbacService.instance.getDomainAccess(
+    session,
+    permission: permission,
+    resource: resource,
+  );
 
-  /// Checks if access to [roleName] is restricted to specific domains.
-  Future<bool> hasDomainsForRole(String roleName) =>
-      AbacService.instance.hasDomainsForRole(session, roleName: roleName);
+  /// Evaluates domain access for a specific role.
+  Future<RbacAbacResult> getRoleDomainAccess(
+    String roleName, {
+    String? resource,
+    String? permission,
+  }) => AbacService.instance.getRoleDomainAccess(
+    session,
+    roleName: roleName,
+    resource: resource,
+    permission: permission,
+  );
 
-  /// Returns the domains granted for [roleName] to the current user.
-  Future<List<String>> getDomainsForRole(String roleName) =>
-      AbacService.instance.getDomainsForRole(session, roleName: roleName);
-
-  /// Returns domain evaluation details for [roleName].
-  Future<RbacAbacResult> getRoleDomainAccess(String roleName) =>
-      AbacService.instance.getRoleDomainAccess(session, roleName: roleName);
-
-  /// Returns all distinct domains assigned to the current user.
-  Future<List<String>> getAllDomains() =>
-      AbacService.instance.getAllDomains(session);
+  /// Returns all distinct domain filter expressions across all roles for the current user.
+  Future<List<String>> getAllDomainFilters({
+    String? resource,
+    String? permission,
+  }) => AbacService.instance.getAllDomainFilters(
+    session,
+    resource: resource,
+    permission: permission,
+  );
 }

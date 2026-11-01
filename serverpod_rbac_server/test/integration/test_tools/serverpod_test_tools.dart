@@ -16,6 +16,8 @@ import 'dart:io' as _idi;
 import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_rbac_server/src/generated/rbac_abac_result.dart'
     as _i8x877ti;
+import 'package:serverpod_rbac_server/src/generated/rbac_domain_rule.dart'
+    as _i4vx2l3o;
 import 'package:serverpod_rbac_server/src/generated/rbac_permission.dart'
     as _i44dc49h;
 import 'package:serverpod_rbac_server/src/generated/rbac_role.dart'
@@ -621,7 +623,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -637,7 +638,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'roleName': roleName,
-            'domain': domain,
           }),
           serializationManager: _serializationManager,
         );
@@ -658,7 +658,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -674,7 +673,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'roleNames': roleNames,
-            'domain': domain,
           }),
           serializationManager: _serializationManager,
         );
@@ -695,7 +693,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required List<String> userIdentifiers,
     required String roleName,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -711,44 +708,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifiers': userIdentifiers,
             'roleName': roleName,
-            'domain': domain,
-          }),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue =
-            await (_localCallContext.method.call(
-                  _localUniqueSession,
-                  _localCallContext.arguments,
-                )
-                as _ida.Future<void>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _ida.Future<void> assignRoleToUserDomains(
-    _ist.TestSessionBuilder sessionBuilder, {
-    required String userIdentifier,
-    required String roleName,
-    required List<String> domains,
-  }) async {
-    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
-            endpoint: 'rbacAdmin',
-            method: 'assignRoleToUserDomains',
-          );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'rbacAdmin',
-          methodName: 'assignRoleToUserDomains',
-          parameters: _ist.testObjectToJson({
-            'userIdentifier': userIdentifier,
-            'roleName': roleName,
-            'domains': domains,
           }),
           serializationManager: _serializationManager,
         );
@@ -769,7 +728,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -785,7 +743,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'roleName': roleName,
-            'domain': domain,
           }),
           serializationManager: _serializationManager,
         );
@@ -806,7 +763,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -822,7 +778,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'roleNames': roleNames,
-            'domain': domain,
           }),
           serializationManager: _serializationManager,
         );
@@ -843,7 +798,6 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     String? userIdentifier,
     String? roleName,
-    String? domain,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -859,7 +813,6 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'roleName': roleName,
-            'domain': domain,
           }),
           serializationManager: _serializationManager,
         );
@@ -878,9 +831,8 @@ class _RbacAdminEndpoint {
 
   _ida.Future<List<_inzb62ef.RbacRole>> getUserRoles(
     _ist.TestSessionBuilder sessionBuilder,
-    String userIdentifier, {
-    String? domain,
-  }) async {
+    String userIdentifier,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -892,10 +844,7 @@ class _RbacAdminEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbacAdmin',
           methodName: 'getUserRoles',
-          parameters: _ist.testObjectToJson({
-            'userIdentifier': userIdentifier,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'userIdentifier': userIdentifier}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -942,25 +891,204 @@ class _RbacAdminEndpoint {
     });
   }
 
-  _ida.Future<List<String>> getUserDomains(
+  _ida.Future<_i4vx2l3o.RbacDomainRule> addDomainRule(
     _ist.TestSessionBuilder sessionBuilder, {
-    required String userIdentifier,
+    required String roleName,
+    required String resource,
+    required String filterExpression,
+    String? permission,
+    String? description,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbacAdmin',
+            method: 'addDomainRule',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbacAdmin',
+          methodName: 'addDomainRule',
+          parameters: _ist.testObjectToJson({
+            'roleName': roleName,
+            'resource': resource,
+            'filterExpression': filterExpression,
+            'permission': permission,
+            'description': description,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i4vx2l3o.RbacDomainRule>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<_i4vx2l3o.RbacDomainRule>> addDomainRules(
+    _ist.TestSessionBuilder sessionBuilder,
+    List<_i4vx2l3o.RbacDomainRule> rules,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbacAdmin',
+            method: 'addDomainRules',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbacAdmin',
+          methodName: 'addDomainRules',
+          parameters: _ist.testObjectToJson({'rules': rules}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i4vx2l3o.RbacDomainRule>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<void> removeDomainRule(
+    _ist.TestSessionBuilder sessionBuilder,
+    int ruleId,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbacAdmin',
+            method: 'removeDomainRule',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbacAdmin',
+          methodName: 'removeDomainRule',
+          parameters: _ist.testObjectToJson({'ruleId': ruleId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<void> clearDomainRules(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String roleName,
+    String? resource,
     String? permission,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
             endpoint: 'rbacAdmin',
-            method: 'getUserDomains',
+            method: 'clearDomainRules',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbacAdmin',
-          methodName: 'getUserDomains',
+          methodName: 'clearDomainRules',
+          parameters: _ist.testObjectToJson({
+            'roleName': roleName,
+            'resource': resource,
+            'permission': permission,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<_i4vx2l3o.RbacDomainRule>> listDomainRules(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String roleName,
+    String? resource,
+    String? permission,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbacAdmin',
+            method: 'listDomainRules',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbacAdmin',
+          methodName: 'listDomainRules',
+          parameters: _ist.testObjectToJson({
+            'roleName': roleName,
+            'resource': resource,
+            'permission': permission,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i4vx2l3o.RbacDomainRule>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<String>> getUserDomainFilters(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String userIdentifier,
+    required String permission,
+    String? resource,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbacAdmin',
+            method: 'getUserDomainFilters',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbacAdmin',
+          methodName: 'getUserDomainFilters',
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'permission': permission,
+            'resource': resource,
           }),
           serializationManager: _serializationManager,
         );
@@ -981,6 +1109,7 @@ class _RbacAdminEndpoint {
     _ist.TestSessionBuilder sessionBuilder, {
     required String userIdentifier,
     required String permission,
+    String? resource,
   }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -996,6 +1125,7 @@ class _RbacAdminEndpoint {
           parameters: _ist.testObjectToJson({
             'userIdentifier': userIdentifier,
             'permission': permission,
+            'resource': resource,
           }),
           serializationManager: _serializationManager,
         );
@@ -1012,21 +1142,26 @@ class _RbacAdminEndpoint {
     });
   }
 
-  _ida.Future<List<String>> listAllDomains(
-    _ist.TestSessionBuilder sessionBuilder,
-  ) async {
+  _ida.Future<List<String>> getAllUserDomainFilters(
+    _ist.TestSessionBuilder sessionBuilder, {
+    required String userIdentifier,
+    String? resource,
+  }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
             endpoint: 'rbacAdmin',
-            method: 'listAllDomains',
+            method: 'getAllUserDomainFilters',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbacAdmin',
-          methodName: 'listAllDomains',
-          parameters: _ist.testObjectToJson({}),
+          methodName: 'getAllUserDomainFilters',
+          parameters: _ist.testObjectToJson({
+            'userIdentifier': userIdentifier,
+            'resource': resource,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1112,9 +1247,8 @@ class _RbacEndpoint {
   }
 
   _ida.Future<List<String>> getMyRoles(
-    _ist.TestSessionBuilder sessionBuilder, {
-    String? domain,
-  }) async {
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1126,38 +1260,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'getMyRoles',
-          parameters: _ist.testObjectToJson({'domain': domain}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue =
-            await (_localCallContext.method.call(
-                  _localUniqueSession,
-                  _localCallContext.arguments,
-                )
-                as _ida.Future<List<String>>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _ida.Future<List<String>> getMyDomains(
-    _ist.TestSessionBuilder sessionBuilder, {
-    String? permission,
-  }) async {
-    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
-            endpoint: 'rbac',
-            method: 'getMyDomains',
-          );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'rbac',
-          methodName: 'getMyDomains',
-          parameters: _ist.testObjectToJson({'permission': permission}),
+          parameters: _ist.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1175,8 +1278,9 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasDomains(
     _ist.TestSessionBuilder sessionBuilder,
-    String permission,
-  ) async {
+    String permission, {
+    String? resource,
+  }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1188,7 +1292,10 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasDomains',
-          parameters: _ist.testObjectToJson({'permission': permission}),
+          parameters: _ist.testObjectToJson({
+            'permission': permission,
+            'resource': resource,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1204,10 +1311,46 @@ class _RbacEndpoint {
     });
   }
 
+  _ida.Future<List<String>> getMyDomainFilters(
+    _ist.TestSessionBuilder sessionBuilder,
+    String permission, {
+    String? resource,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbac',
+            method: 'getMyDomainFilters',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbac',
+          methodName: 'getMyDomainFilters',
+          parameters: _ist.testObjectToJson({
+            'permission': permission,
+            'resource': resource,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _ida.Future<_i8x877ti.RbacAbacResult> getMyDomainAccess(
     _ist.TestSessionBuilder sessionBuilder,
-    String permission,
-  ) async {
+    String permission, {
+    String? resource,
+  }) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1219,7 +1362,10 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'getMyDomainAccess',
-          parameters: _ist.testObjectToJson({'permission': permission}),
+          parameters: _ist.testObjectToJson({
+            'permission': permission,
+            'resource': resource,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1235,11 +1381,41 @@ class _RbacEndpoint {
     });
   }
 
+  _ida.Future<List<String>> getMyAllDomainFilters(
+    _ist.TestSessionBuilder sessionBuilder, {
+    String? resource,
+  }) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'rbac',
+            method: 'getMyAllDomainFilters',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'rbac',
+          methodName: 'getMyAllDomainFilters',
+          parameters: _ist.testObjectToJson({'resource': resource}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _ida.Future<bool> hasPermission(
     _ist.TestSessionBuilder sessionBuilder,
-    String permission, {
-    String? domain,
-  }) async {
+    String permission,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1251,10 +1427,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasPermission',
-          parameters: _ist.testObjectToJson({
-            'permission': permission,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permission': permission}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1272,9 +1445,8 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasAllPermissions(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> permissions, {
-    String? domain,
-  }) async {
+    List<String> permissions,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1286,10 +1458,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasAllPermissions',
-          parameters: _ist.testObjectToJson({
-            'permissions': permissions,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permissions': permissions}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1307,9 +1476,8 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasAnyPermission(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> permissions, {
-    String? domain,
-  }) async {
+    List<String> permissions,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1321,10 +1489,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasAnyPermission',
-          parameters: _ist.testObjectToJson({
-            'permissions': permissions,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permissions': permissions}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1342,9 +1507,8 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasRole(
     _ist.TestSessionBuilder sessionBuilder,
-    String role, {
-    String? domain,
-  }) async {
+    String role,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1356,10 +1520,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasRole',
-          parameters: _ist.testObjectToJson({
-            'role': role,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'role': role}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1377,9 +1538,8 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasAnyRole(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> roles, {
-    String? domain,
-  }) async {
+    List<String> roles,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1391,10 +1551,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasAnyRole',
-          parameters: _ist.testObjectToJson({
-            'roles': roles,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'roles': roles}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1412,9 +1569,8 @@ class _RbacEndpoint {
 
   _ida.Future<bool> hasAllRoles(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> roles, {
-    String? domain,
-  }) async {
+    List<String> roles,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1426,10 +1582,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'hasAllRoles',
-          parameters: _ist.testObjectToJson({
-            'roles': roles,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'roles': roles}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1447,9 +1600,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requirePermission(
     _ist.TestSessionBuilder sessionBuilder,
-    String permission, {
-    String? domain,
-  }) async {
+    String permission,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1461,10 +1613,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requirePermission',
-          parameters: _ist.testObjectToJson({
-            'permission': permission,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permission': permission}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1482,9 +1631,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requireAllPermissions(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> permissions, {
-    String? domain,
-  }) async {
+    List<String> permissions,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1496,10 +1644,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requireAllPermissions',
-          parameters: _ist.testObjectToJson({
-            'permissions': permissions,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permissions': permissions}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1517,9 +1662,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requireAnyPermission(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> permissions, {
-    String? domain,
-  }) async {
+    List<String> permissions,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1531,10 +1675,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requireAnyPermission',
-          parameters: _ist.testObjectToJson({
-            'permissions': permissions,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'permissions': permissions}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1552,9 +1693,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requireRole(
     _ist.TestSessionBuilder sessionBuilder,
-    String role, {
-    String? domain,
-  }) async {
+    String role,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1566,10 +1706,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requireRole',
-          parameters: _ist.testObjectToJson({
-            'role': role,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'role': role}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1587,9 +1724,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requireAllRoles(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> roles, {
-    String? domain,
-  }) async {
+    List<String> roles,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1601,10 +1737,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requireAllRoles',
-          parameters: _ist.testObjectToJson({
-            'roles': roles,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'roles': roles}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -1622,9 +1755,8 @@ class _RbacEndpoint {
 
   _ida.Future<void> requireAnyRole(
     _ist.TestSessionBuilder sessionBuilder,
-    List<String> roles, {
-    String? domain,
-  }) async {
+    List<String> roles,
+  ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
@@ -1636,10 +1768,7 @@ class _RbacEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'rbac',
           methodName: 'requireAnyRole',
-          parameters: _ist.testObjectToJson({
-            'roles': roles,
-            'domain': domain,
-          }),
+          parameters: _ist.testObjectToJson({'roles': roles}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

@@ -7,4 +7,5 @@ fields:
   isSystemRole: bool, default=false
   permissions: List<RbacRolePermission>?, relation(name=role_permissions)
   userRoles: List<RbacUserRole>?, relation(name=role_user_roles)
+  domainRules: List<RbacDomainRule>?, relation(name=role_domain_rules)
   createdAt: DateTime, default=now

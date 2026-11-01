@@ -13,6 +13,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/protocol.dart' as _isp;
 import 'package:serverpod/serverpod.dart' as _is;
+import 'package:serverpod_rbac_server/src/generated/rbac_domain_rule.dart'
+    as _i4vx2l3o;
 import 'package:serverpod_rbac_server/src/generated/rbac_permission.dart'
     as _i44dc49h;
 import 'package:serverpod_rbac_server/src/generated/rbac_role.dart'
@@ -20,6 +22,7 @@ import 'package:serverpod_rbac_server/src/generated/rbac_role.dart'
 import 'package:serverpod_rbac_server/src/generated/rbac_user_role.dart'
     as _iq9wo7s2;
 import 'rbac_abac_result.dart' as _is9x66yl;
+import 'rbac_domain_rule.dart' as _ita46piq;
 import 'rbac_exception.dart' as _irzd0ivn;
 import 'rbac_exception_reason.dart' as _ilr4m7ck;
 import 'rbac_permission.dart' as _ijqyf5jf;
@@ -28,6 +31,7 @@ import 'rbac_role_permission.dart' as _is7enq59;
 import 'rbac_user_permissions_info.dart' as _icgz0mns;
 import 'rbac_user_role.dart' as _ig5ad0pf;
 export 'rbac_abac_result.dart';
+export 'rbac_domain_rule.dart';
 export 'rbac_exception.dart';
 export 'rbac_exception_reason.dart';
 export 'rbac_permission.dart';
@@ -46,6 +50,107 @@ class Protocol extends _is.DatabaseSerializationManager {
   final Set<_is.SerializationManager> _hostProtocols = {};
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'serverpod_rbac_domain_rule',
+      dartName: 'RbacDomainRule',
+      schema: 'public',
+      module: 'serverpod_rbac',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'roleId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'resource',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'permission',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'filterExpression',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'description',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'now',
+        ),
+      ],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'serverpod_rbac_domain_rule_fk_0',
+          columns: ['roleId'],
+          referenceTable: 'serverpod_rbac_role',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'serverpod_rbac_domain_rule_role_resource_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'roleId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'resource',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'permission',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'serverpod_rbac_domain_rule_resource_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'resource',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     _isp.TableDefinition(
       name: 'serverpod_rbac_permission',
       dartName: 'RbacPermission',
@@ -280,12 +385,6 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'int',
         ),
         _isp.ColumnDefinition(
-          name: 'domain',
-          columnType: _isp.ColumnType.text,
-          isNullable: true,
-          dartType: 'String?',
-        ),
-        _isp.ColumnDefinition(
           name: 'createdAt',
           columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
@@ -307,7 +406,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'serverpod_rbac_user_role_user_role_domain_idx',
+          indexName: 'serverpod_rbac_user_role_user_role_idx',
           tableSpace: null,
           elements: [
             _isp.IndexElementDefinition(
@@ -318,14 +417,9 @@ class Protocol extends _is.DatabaseSerializationManager {
               type: _isp.IndexElementDefinitionType.column,
               definition: 'roleId',
             ),
-            _isp.IndexElementDefinition(
-              type: _isp.IndexElementDefinitionType.column,
-              definition: 'domain',
-            ),
           ],
           type: 'btree',
           isUnique: true,
-          nullsDistinct: false,
           isPrimary: false,
         ),
         _isp.IndexDefinition(
@@ -335,19 +429,6 @@ class Protocol extends _is.DatabaseSerializationManager {
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'userIdentifier',
-            ),
-          ],
-          type: 'btree',
-          isUnique: false,
-          isPrimary: false,
-        ),
-        _isp.IndexDefinition(
-          indexName: 'serverpod_rbac_user_role_domain_idx',
-          tableSpace: null,
-          elements: [
-            _isp.IndexElementDefinition(
-              type: _isp.IndexElementDefinitionType.column,
-              definition: 'domain',
             ),
           ],
           type: 'btree',
@@ -398,6 +479,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _is9x66yl.RbacAbacResult) {
       return _is9x66yl.RbacAbacResult.fromJson(data) as T;
     }
+    if (t == _ita46piq.RbacDomainRule) {
+      return _ita46piq.RbacDomainRule.fromJson(data) as T;
+    }
     if (t == _irzd0ivn.RbacException) {
       return _irzd0ivn.RbacException.fromJson(data) as T;
     }
@@ -421,6 +505,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_is9x66yl.RbacAbacResult?>()) {
       return (data != null ? _is9x66yl.RbacAbacResult.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_ita46piq.RbacDomainRule?>()) {
+      return (data != null ? _ita46piq.RbacDomainRule.fromJson(data) : null)
           as T;
     }
     if (t == _is.getType<_irzd0ivn.RbacException?>()) {
@@ -484,6 +572,20 @@ class Protocol extends _is.DatabaseSerializationManager {
               : null)
           as T;
     }
+    if (t == List<_ita46piq.RbacDomainRule>) {
+      return (data as List)
+              .map((e) => deserialize<_ita46piq.RbacDomainRule>(e))
+              .toList()
+          as T;
+    }
+    if (t == _is.getType<List<_ita46piq.RbacDomainRule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_ita46piq.RbacDomainRule>(e))
+                    .toList()
+              : null)
+          as T;
+    }
     if (t == List<_i44dc49h.RbacPermission>) {
       return (data as List)
               .map((e) => deserialize<_i44dc49h.RbacPermission>(e))
@@ -508,6 +610,12 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_i4vx2l3o.RbacDomainRule>) {
+      return (data as List)
+              .map((e) => deserialize<_i4vx2l3o.RbacDomainRule>(e))
+              .toList()
+          as T;
+    }
     try {
       return _isp.Protocol().deserialize<T>(data, t);
     } on _is.DeserializationTypeNotFoundException catch (_) {}
@@ -517,6 +625,7 @@ class Protocol extends _is.DatabaseSerializationManager {
   static String? getClassNameForType(Type type) {
     return switch (type) {
       _is9x66yl.RbacAbacResult => 'RbacAbacResult',
+      _ita46piq.RbacDomainRule => 'RbacDomainRule',
       _irzd0ivn.RbacException => 'RbacException',
       _ilr4m7ck.RbacExceptionReason => 'RbacExceptionReason',
       _ijqyf5jf.RbacPermission => 'RbacPermission',
@@ -543,6 +652,8 @@ class Protocol extends _is.DatabaseSerializationManager {
     switch (data) {
       case _is9x66yl.RbacAbacResult():
         return 'RbacAbacResult';
+      case _ita46piq.RbacDomainRule():
+        return 'RbacDomainRule';
       case _irzd0ivn.RbacException():
         return 'RbacException';
       case _ilr4m7ck.RbacExceptionReason():
@@ -573,6 +684,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'RbacAbacResult') {
       return deserialize<_is9x66yl.RbacAbacResult>(data['data']);
+    }
+    if (dataClassName == 'RbacDomainRule') {
+      return deserialize<_ita46piq.RbacDomainRule>(data['data']);
     }
     if (dataClassName == 'RbacException') {
       return deserialize<_irzd0ivn.RbacException>(data['data']);
@@ -670,6 +784,8 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
     switch (t) {
+      case _ita46piq.RbacDomainRule:
+        return _ita46piq.RbacDomainRule.t;
       case _ijqyf5jf.RbacPermission:
         return _ijqyf5jf.RbacPermission.t;
       case _im7c8v5q.RbacRole:

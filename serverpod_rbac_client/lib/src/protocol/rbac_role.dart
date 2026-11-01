@@ -12,6 +12,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:serverpod_rbac_client/src/protocol/protocol.dart' as _iqg09eor;
+import 'rbac_domain_rule.dart' as _ita46piq;
 import 'rbac_role_permission.dart' as _is7enq59;
 import 'rbac_user_role.dart' as _ig5ad0pf;
 
@@ -25,6 +26,7 @@ abstract class RbacRole
     bool? isSystemRole,
     this.permissions,
     this.userRoles,
+    this.domainRules,
     DateTime? createdAt,
   }) : isSuperuser = isSuperuser ?? false,
        isSystemRole = isSystemRole ?? false,
@@ -38,6 +40,7 @@ abstract class RbacRole
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   }) = _RbacRoleImpl;
 
@@ -63,6 +66,11 @@ abstract class RbacRole
           : _iqg09eor.Protocol().deserialize<List<_ig5ad0pf.RbacUserRole>>(
               jsonSerialization['userRoles'],
             ),
+      domainRules: jsonSerialization['domainRules'] == null
+          ? null
+          : _iqg09eor.Protocol().deserialize<List<_ita46piq.RbacDomainRule>>(
+              jsonSerialization['domainRules'],
+            ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _isc.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -86,6 +94,8 @@ abstract class RbacRole
 
   List<_ig5ad0pf.RbacUserRole>? userRoles;
 
+  List<_ita46piq.RbacDomainRule>? domainRules;
+
   DateTime createdAt;
 
   /// Returns a shallow copy of this [RbacRole]
@@ -99,6 +109,7 @@ abstract class RbacRole
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   });
   @override
@@ -114,6 +125,8 @@ abstract class RbacRole
         'permissions': permissions?.toJson(valueToJson: (v) => v.toJson()),
       if (userRoles != null)
         'userRoles': userRoles?.toJson(valueToJson: (v) => v.toJson()),
+      if (domainRules != null)
+        'domainRules': domainRules?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
     };
   }
@@ -133,6 +146,10 @@ abstract class RbacRole
         ),
       if (userRoles != null)
         'userRoles': userRoles?.toJson(
+          valueToJson: (v) => v.toJsonForProtocol(),
+        ),
+      if (domainRules != null)
+        'domainRules': domainRules?.toJson(
           valueToJson: (v) => v.toJsonForProtocol(),
         ),
       'createdAt': createdAt.toJson(),
@@ -156,6 +173,7 @@ class _RbacRoleImpl extends RbacRole {
     bool? isSystemRole,
     List<_is7enq59.RbacRolePermission>? permissions,
     List<_ig5ad0pf.RbacUserRole>? userRoles,
+    List<_ita46piq.RbacDomainRule>? domainRules,
     DateTime? createdAt,
   }) : super._(
          id: id,
@@ -165,6 +183,7 @@ class _RbacRoleImpl extends RbacRole {
          isSystemRole: isSystemRole,
          permissions: permissions,
          userRoles: userRoles,
+         domainRules: domainRules,
          createdAt: createdAt,
        );
 
@@ -180,6 +199,7 @@ class _RbacRoleImpl extends RbacRole {
     bool? isSystemRole,
     Object? permissions = _Undefined,
     Object? userRoles = _Undefined,
+    Object? domainRules = _Undefined,
     DateTime? createdAt,
   }) {
     return RbacRole(
@@ -194,6 +214,9 @@ class _RbacRoleImpl extends RbacRole {
       userRoles: userRoles is List<_ig5ad0pf.RbacUserRole>?
           ? userRoles
           : this.userRoles?.map((e0) => e0.copyWith()).toList(),
+      domainRules: domainRules is List<_ita46piq.RbacDomainRule>?
+          ? domainRules
+          : this.domainRules?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
     );
   }

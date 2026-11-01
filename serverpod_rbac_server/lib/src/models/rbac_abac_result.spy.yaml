@@ -3,7 +3,8 @@ fields:
   userIdentifier: String
   permission: String?
   roleName: String?
+  resource: String?
   isAllowed: bool
   hasDomains: bool
-  domains: List<String>
+  filterExpressions: List<String>
   isUnrestricted: bool

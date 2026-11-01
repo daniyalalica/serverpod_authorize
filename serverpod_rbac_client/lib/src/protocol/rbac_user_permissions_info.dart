@@ -20,7 +20,6 @@ abstract class RbacUserPermissionsInfo
     required this.isSuperuser,
     required this.roles,
     required this.permissions,
-    required this.domains,
   });
 
   factory RbacUserPermissionsInfo({
@@ -28,7 +27,6 @@ abstract class RbacUserPermissionsInfo
     required bool isSuperuser,
     required List<String> roles,
     required List<String> permissions,
-    required List<String> domains,
   }) = _RbacUserPermissionsInfoImpl;
 
   factory RbacUserPermissionsInfo.fromJson(
@@ -45,9 +43,6 @@ abstract class RbacUserPermissionsInfo
       permissions: _iqg09eor.Protocol().deserialize<List<String>>(
         jsonSerialization['permissions'],
       ),
-      domains: _iqg09eor.Protocol().deserialize<List<String>>(
-        jsonSerialization['domains'],
-      ),
     );
   }
 
@@ -59,8 +54,6 @@ abstract class RbacUserPermissionsInfo
 
   List<String> permissions;
 
-  List<String> domains;
-
   /// Returns a shallow copy of this [RbacUserPermissionsInfo]
   /// with some or all fields replaced by the given arguments.
   @_isc.useResult
@@ -69,7 +62,6 @@ abstract class RbacUserPermissionsInfo
     bool? isSuperuser,
     List<String>? roles,
     List<String>? permissions,
-    List<String>? domains,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -79,7 +71,6 @@ abstract class RbacUserPermissionsInfo
       'isSuperuser': isSuperuser,
       'roles': roles.toJson(),
       'permissions': permissions.toJson(),
-      'domains': domains.toJson(),
     };
   }
 
@@ -91,7 +82,6 @@ abstract class RbacUserPermissionsInfo
       'isSuperuser': isSuperuser,
       'roles': roles.toJson(),
       'permissions': permissions.toJson(),
-      'domains': domains.toJson(),
     };
   }
 
@@ -107,13 +97,11 @@ class _RbacUserPermissionsInfoImpl extends RbacUserPermissionsInfo {
     required bool isSuperuser,
     required List<String> roles,
     required List<String> permissions,
-    required List<String> domains,
   }) : super._(
          userIdentifier: userIdentifier,
          isSuperuser: isSuperuser,
          roles: roles,
          permissions: permissions,
-         domains: domains,
        );
 
   /// Returns a shallow copy of this [RbacUserPermissionsInfo]
@@ -125,14 +113,12 @@ class _RbacUserPermissionsInfoImpl extends RbacUserPermissionsInfo {
     bool? isSuperuser,
     List<String>? roles,
     List<String>? permissions,
-    List<String>? domains,
   }) {
     return RbacUserPermissionsInfo(
       userIdentifier: userIdentifier ?? this.userIdentifier,
       isSuperuser: isSuperuser ?? this.isSuperuser,
       roles: roles ?? this.roles.map((e0) => e0).toList(),
       permissions: permissions ?? this.permissions.map((e0) => e0).toList(),
-      domains: domains ?? this.domains.map((e0) => e0).toList(),
     );
   }
 }

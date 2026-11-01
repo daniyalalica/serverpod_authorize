@@ -15,22 +15,27 @@ rbacAdmin:
   - assignRoleToUser:
   - assignRolesToUser:
   - assignRoleToUsers:
-  - assignRoleToUserDomains:
   - removeRoleFromUser:
   - removeRolesFromUser:
   - listUserRoles:
   - getUserRoles:
   - getUserPermissionsInfo:
-  - getUserDomains:
+  - addDomainRule:
+  - addDomainRules:
+  - removeDomainRule:
+  - clearDomainRules:
+  - listDomainRules:
+  - getUserDomainFilters:
   - getUserDomainAccess:
-  - listAllDomains:
+  - getAllUserDomainFilters:
 rbac:
   - isSuperuser:
   - getMyPermissions:
   - getMyRoles:
-  - getMyDomains:
   - hasDomains:
+  - getMyDomainFilters:
   - getMyDomainAccess:
+  - getMyAllDomainFilters:
   - hasPermission:
   - hasAllPermissions:
   - hasAnyPermission:

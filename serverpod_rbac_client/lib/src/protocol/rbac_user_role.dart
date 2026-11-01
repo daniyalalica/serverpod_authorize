@@ -21,7 +21,6 @@ abstract class RbacUserRole
     required this.userIdentifier,
     required this.roleId,
     this.role,
-    this.domain,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
@@ -30,7 +29,6 @@ abstract class RbacUserRole
     required String userIdentifier,
     required int roleId,
     _im7c8v5q.RbacRole? role,
-    String? domain,
     DateTime? createdAt,
   }) = _RbacUserRoleImpl;
 
@@ -44,7 +42,6 @@ abstract class RbacUserRole
           : _iqg09eor.Protocol().deserialize<_im7c8v5q.RbacRole>(
               jsonSerialization['role'],
             ),
-      domain: jsonSerialization['domain'] as String?,
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _isc.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -62,8 +59,6 @@ abstract class RbacUserRole
 
   _im7c8v5q.RbacRole? role;
 
-  String? domain;
-
   DateTime createdAt;
 
   /// Returns a shallow copy of this [RbacUserRole]
@@ -74,7 +69,6 @@ abstract class RbacUserRole
     String? userIdentifier,
     int? roleId,
     _im7c8v5q.RbacRole? role,
-    String? domain,
     DateTime? createdAt,
   });
   @override
@@ -85,7 +79,6 @@ abstract class RbacUserRole
       'userIdentifier': userIdentifier,
       'roleId': roleId,
       if (role != null) 'role': role?.toJson(),
-      if (domain != null) 'domain': domain,
       'createdAt': createdAt.toJson(),
     };
   }
@@ -98,7 +91,6 @@ abstract class RbacUserRole
       'userIdentifier': userIdentifier,
       'roleId': roleId,
       if (role != null) 'role': role?.toJsonForProtocol(),
-      if (domain != null) 'domain': domain,
       'createdAt': createdAt.toJson(),
     };
   }
@@ -117,14 +109,12 @@ class _RbacUserRoleImpl extends RbacUserRole {
     required String userIdentifier,
     required int roleId,
     _im7c8v5q.RbacRole? role,
-    String? domain,
     DateTime? createdAt,
   }) : super._(
          id: id,
          userIdentifier: userIdentifier,
          roleId: roleId,
          role: role,
-         domain: domain,
          createdAt: createdAt,
        );
 
@@ -137,7 +127,6 @@ class _RbacUserRoleImpl extends RbacUserRole {
     String? userIdentifier,
     int? roleId,
     Object? role = _Undefined,
-    Object? domain = _Undefined,
     DateTime? createdAt,
   }) {
     return RbacUserRole(
@@ -145,7 +134,6 @@ class _RbacUserRoleImpl extends RbacUserRole {
       userIdentifier: userIdentifier ?? this.userIdentifier,
       roleId: roleId ?? this.roleId,
       role: role is _im7c8v5q.RbacRole? ? role : this.role?.copyWith(),
-      domain: domain is String? ? domain : this.domain,
       createdAt: createdAt ?? this.createdAt,
     );
   }

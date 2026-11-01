@@ -1,5 +1,4 @@
 import 'package:serverpod/serverpod.dart';
-import 'abac_service.dart';
 import 'generated/protocol.dart';
 import 'rbac_cache.dart';
 
@@ -16,9 +15,6 @@ class RbacService {
 
   /// Cache manager for RBAC.
   final RbacCache cache = RbacCache();
-
-  /// ABAC service for domain-aware queries.
-  final AbacService abac = AbacService.instance;
 
   /// Optional custom resolver for superuser status.
   SuperuserResolver? customSuperuserResolver;
@@ -160,16 +156,12 @@ class RbacService {
 
     final roleNames = <String>{};
     final permissions = <String>{};
-    final domains = <String>{};
 
     for (final ur in assignments) {
       final role = ur.role;
       if (role == null) continue;
 
       roleNames.add(role.name);
-      if (ur.domain != null && ur.domain!.isNotEmpty) {
-        domains.add(ur.domain!);
-      }
 
       for (final rp in role.permissions ?? <RbacRolePermission>[]) {
         final p = rp.permission;
@@ -184,18 +176,16 @@ class RbacService {
       isSuperuser: isSuper,
       roles: roleNames.toList(),
       permissions: permissions.toList(),
-      domains: domains.toList(),
     );
 
     await cache.putUserPermissionsInfo(session, userIdentifier, info);
     return info;
   }
 
-  /// Checks if the user has a specific permission, optionally scoped to [domain].
+  /// Checks if the user has a specific permission.
   Future<bool> hasPermission(
     Session session,
     String permission, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -210,12 +200,6 @@ class RbacService {
       final role = ur.role;
       if (role == null) continue;
       if (role.isSuperuser) return true;
-
-      // If domain check is requested:
-      // The role assignment must be global (ur.domain == null) OR match the specified domain.
-      if (domain != null && ur.domain != null && ur.domain != domain) {
-        continue;
-      }
 
       for (final rp in role.permissions ?? <RbacRolePermission>[]) {
         final p = rp.permission;
@@ -238,7 +222,6 @@ class RbacService {
   Future<bool> hasAllPermissions(
     Session session,
     List<String> permissions, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -248,7 +231,6 @@ class RbacService {
       final has = await hasPermission(
         session,
         permission,
-        domain: domain,
         userIdentifier: uid,
       );
       if (!has) return false;
@@ -260,7 +242,6 @@ class RbacService {
   Future<bool> hasAnyPermission(
     Session session,
     List<String> permissions, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -270,7 +251,6 @@ class RbacService {
       final has = await hasPermission(
         session,
         permission,
-        domain: domain,
         userIdentifier: uid,
       );
       if (has) return true;
@@ -278,11 +258,10 @@ class RbacService {
     return false;
   }
 
-  /// Checks if the user has a specific role, optionally scoped to [domain].
+  /// Checks if the user has a specific role.
   Future<bool> hasRole(
     Session session,
     String roleName, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -299,9 +278,7 @@ class RbacService {
       if (role.isSuperuser) return true;
 
       if (role.name.trim().toLowerCase() == normalized) {
-        if (domain == null || ur.domain == null || ur.domain == domain) {
-          return true;
-        }
+        return true;
       }
     }
     return false;
@@ -311,7 +288,6 @@ class RbacService {
   Future<bool> hasAnyRole(
     Session session,
     List<String> roleNames, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -321,7 +297,6 @@ class RbacService {
       final has = await hasRole(
         session,
         role,
-        domain: domain,
         userIdentifier: uid,
       );
       if (has) return true;
@@ -333,7 +308,6 @@ class RbacService {
   Future<bool> hasAllRoles(
     Session session,
     List<String> roleNames, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = getUserIdentifier(session, userIdentifier);
@@ -343,7 +317,6 @@ class RbacService {
       final has = await hasRole(
         session,
         role,
-        domain: domain,
         userIdentifier: uid,
       );
       if (!has) return false;
@@ -359,22 +332,19 @@ class RbacService {
   Future<void> requirePermission(
     Session session,
     String permission, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasPermission(
       session,
       permission,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
       throw RbacException(
-        message: 'Permission denied: required "$permission"${domain != null ? ' in domain "$domain"' : ''}',
+        message: 'Permission denied: required "$permission"',
         reason: RbacExceptionReason.permissionDenied,
         requiredPermission: permission,
-        requiredDomain: domain,
         userIdentifier: uid,
       );
     }
@@ -384,14 +354,12 @@ class RbacService {
   Future<void> requireAllPermissions(
     Session session,
     List<String> permissions, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasAllPermissions(
       session,
       permissions,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
@@ -407,14 +375,12 @@ class RbacService {
   Future<void> requireAnyPermission(
     Session session,
     List<String> permissions, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasAnyPermission(
       session,
       permissions,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
@@ -430,22 +396,19 @@ class RbacService {
   Future<void> requireRole(
     Session session,
     String roleName, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasRole(
       session,
       roleName,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
       throw RbacException(
-        message: 'Role denied: required "$roleName"${domain != null ? ' in domain "$domain"' : ''}',
+        message: 'Role denied: required "$roleName"',
         reason: RbacExceptionReason.roleDenied,
         requiredRole: roleName,
-        requiredDomain: domain,
         userIdentifier: uid,
       );
     }
@@ -455,14 +418,12 @@ class RbacService {
   Future<void> requireAllRoles(
     Session session,
     List<String> roleNames, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasAllRoles(
       session,
       roleNames,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
@@ -478,14 +439,12 @@ class RbacService {
   Future<void> requireAnyRole(
     Session session,
     List<String> roleNames, {
-    String? domain,
     String? userIdentifier,
   }) async {
     final uid = requireUserIdentifier(session, userIdentifier);
     final allowed = await hasAnyRole(
       session,
       roleNames,
-      domain: domain,
       userIdentifier: uid,
     );
     if (!allowed) {
@@ -823,7 +782,7 @@ class RbacService {
   }
 
   // ==========================================
-  // MANAGEMENT: USER ROLES & DOMAINS (Single & Bulk)
+  // MANAGEMENT: USER ROLES (Single & Bulk)
   // ==========================================
 
   /// Assigns a role to a user using [RbacUserRole.db.insertRow].
@@ -831,7 +790,6 @@ class RbacService {
     Session session, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     final role = await getRole(session, roleName);
     if (role == null || role.id == null) {
@@ -842,15 +800,11 @@ class RbacService {
       );
     }
 
-    final normalizedDomain = domain?.trim();
     final existing = await RbacUserRole.db.findFirstRow(
       session,
       where: (t) =>
           t.userIdentifier.equals(userIdentifier) &
-          t.roleId.equals(role.id!) &
-          (normalizedDomain == null
-              ? t.domain.equals(null)
-              : t.domain.equals(normalizedDomain)),
+          t.roleId.equals(role.id!),
     );
 
     if (existing != null) return existing;
@@ -858,7 +812,6 @@ class RbacService {
     final userRole = RbacUserRole(
       userIdentifier: userIdentifier,
       roleId: role.id!,
-      domain: normalizedDomain,
       createdAt: DateTime.now(),
     );
 
@@ -872,7 +825,6 @@ class RbacService {
     Session session, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     if (roleNames.isEmpty) return;
 
@@ -882,12 +834,10 @@ class RbacService {
       where: (t) => t.name.inSet(normalizedNames),
     );
 
-    final normalizedDomain = domain?.trim();
     final rows = roles.map((r) {
       return RbacUserRole(
         userIdentifier: userIdentifier,
         roleId: r.id!,
-        domain: normalizedDomain,
         createdAt: DateTime.now(),
       );
     }).toList();
@@ -908,7 +858,6 @@ class RbacService {
     Session session, {
     required List<String> userIdentifiers,
     required String roleName,
-    String? domain,
   }) async {
     if (userIdentifiers.isEmpty) return;
 
@@ -921,12 +870,10 @@ class RbacService {
       );
     }
 
-    final normalizedDomain = domain?.trim();
     final rows = userIdentifiers.toSet().map((uid) {
       return RbacUserRole(
         userIdentifier: uid,
         roleId: role.id!,
-        domain: normalizedDomain,
         createdAt: DateTime.now(),
       );
     }).toList();
@@ -944,63 +891,20 @@ class RbacService {
     }
   }
 
-  /// Assigns a role to a user across multiple domains in bulk using [RbacUserRole.db.insert].
-  Future<void> assignRoleToUserDomains(
-    Session session, {
-    required String userIdentifier,
-    required String roleName,
-    required List<String> domains,
-  }) async {
-    if (domains.isEmpty) return;
-
-    final role = await getRole(session, roleName);
-    if (role == null || role.id == null) {
-      throw RbacException(
-        message: 'Role "$roleName" not found',
-        reason: RbacExceptionReason.roleNotFound,
-        requiredRole: roleName,
-      );
-    }
-
-    final rows = domains.toSet().map((d) {
-      return RbacUserRole(
-        userIdentifier: userIdentifier,
-        roleId: role.id!,
-        domain: d.trim(),
-        createdAt: DateTime.now(),
-      );
-    }).toList();
-
-    if (rows.isNotEmpty) {
-      await RbacUserRole.db.insert(
-        session,
-        rows,
-        ignoreConflicts: true,
-        noReturn: true,
-      );
-      await cache.invalidateUser(session, userIdentifier);
-    }
-  }
-
   /// Removes a role from a user using [RbacUserRole.db.deleteRow].
   Future<void> removeRoleFromUser(
     Session session, {
     required String userIdentifier,
     required String roleName,
-    String? domain,
   }) async {
     final role = await getRole(session, roleName);
     if (role == null || role.id == null) return;
 
-    final normalizedDomain = domain?.trim();
     final existing = await RbacUserRole.db.find(
       session,
       where: (t) =>
           t.userIdentifier.equals(userIdentifier) &
-          t.roleId.equals(role.id!) &
-          (normalizedDomain == null
-              ? (t.domain.equals(null) | t.domain.notEquals(null))
-              : t.domain.equals(normalizedDomain)),
+          t.roleId.equals(role.id!),
     );
 
     if (existing.isNotEmpty) {
@@ -1014,7 +918,6 @@ class RbacService {
     Session session, {
     required String userIdentifier,
     required List<String> roleNames,
-    String? domain,
   }) async {
     if (roleNames.isEmpty) return;
 
@@ -1025,15 +928,11 @@ class RbacService {
     );
     final roleIds = roles.map((r) => r.id!).toSet();
 
-    final normalizedDomain = domain?.trim();
     final rows = await RbacUserRole.db.find(
       session,
       where: (t) =>
           t.userIdentifier.equals(userIdentifier) &
-          t.roleId.inSet(roleIds) &
-          (normalizedDomain == null
-              ? (t.domain.equals(null) | t.domain.notEquals(null))
-              : t.domain.equals(normalizedDomain)),
+          t.roleId.inSet(roleIds),
     );
 
     if (rows.isNotEmpty) {
@@ -1042,12 +941,11 @@ class RbacService {
     }
   }
 
-  /// Lists all roles assigned to a user, optionally filtered by domain.
+  /// Lists all roles assigned to a user.
   Future<List<RbacRole>> getUserRoles(
     Session session,
-    String userIdentifier, {
-    String? domain,
-  }) async {
+    String userIdentifier,
+  ) async {
     final assignments = await getUserRoleAssignments(session, userIdentifier);
     final roles = <RbacRole>[];
     final seen = <int>{};
@@ -1055,9 +953,6 @@ class RbacService {
     for (final ur in assignments) {
       final role = ur.role;
       if (role == null || role.id == null) continue;
-      if (domain != null && ur.domain != null && ur.domain != domain) {
-        continue;
-      }
       if (seen.add(role.id!)) {
         roles.add(role);
       }
@@ -1070,7 +965,6 @@ class RbacService {
     Session session, {
     String? userIdentifier,
     String? roleName,
-    String? domain,
   }) async {
     int? roleId;
     if (roleName != null) {
@@ -1088,9 +982,6 @@ class RbacService {
         }
         if (roleId != null) {
           expr = expr & t.roleId.equals(roleId);
-        }
-        if (domain != null) {
-          expr = expr & t.domain.equals(domain);
         }
         return expr;
       },
