@@ -1,0 +1,9 @@
+enum: RbacExceptionReason
+values:
+  - permissionDenied
+  - roleDenied
+  - domainDenied
+  - userInactive
+  - notAuthenticated
+  - roleNotFound
+  - permissionNotFound

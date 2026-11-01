@@ -1,0 +1,8 @@
+exception: RbacException
+fields:
+  message: String
+  reason: RbacExceptionReason
+  requiredPermission: String?
+  requiredRole: String?
+  requiredDomain: String?
+  userIdentifier: String?

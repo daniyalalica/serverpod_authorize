@@ -1,0 +1,250 @@
+{
+  "__className__": "serverpod.DatabaseMigration",
+  "actions": [
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "deleteTable",
+      "deleteTable": "serverpod_rbac_object_permission"
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "serverpod_rbac_audit_log",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "scope",
+          "objectId"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"scope\" of table \"serverpod_rbac_audit_log\" will be dropped.",
+            "table": "serverpod_rbac_audit_log",
+            "columns": [
+              "scope"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"objectId\" of table \"serverpod_rbac_audit_log\" will be dropped.",
+            "table": "serverpod_rbac_audit_log",
+            "columns": [
+              "objectId"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "serverpod_rbac_user_permission",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "scope"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [
+          {
+            "__className__": "serverpod.IndexDefinition",
+            "indexName": "serverpod_rbac_user_perm_user_perm_idx",
+            "elements": [
+              {
+                "__className__": "serverpod.IndexElementDefinition",
+                "type": 0,
+                "definition": "userIdentifier"
+              },
+              {
+                "__className__": "serverpod.IndexElementDefinition",
+                "type": 0,
+                "definition": "permissionId"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": false
+          }
+        ],
+        "deleteIndexes": [
+          "serverpod_rbac_user_perm_scope_idx"
+        ],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"scope\" of table \"serverpod_rbac_user_permission\" will be dropped.",
+            "table": "serverpod_rbac_user_permission",
+            "columns": [
+              "scope"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "uniqueIndexCreated",
+            "message": "Unique index \"serverpod_rbac_user_perm_user_perm_idx\" is added to table \"serverpod_rbac_user_permission\". If there are existing rows with duplicate values, this migration will fail.",
+            "table": "serverpod_rbac_user_permission",
+            "columns": [
+              "userIdentifier",
+              "permissionId"
+            ],
+            "destrucive": false
+          }
+        ]
+      }
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "serverpod_rbac_user_role",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "scope"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [
+          {
+            "__className__": "serverpod.IndexDefinition",
+            "indexName": "serverpod_rbac_user_role_user_role_idx",
+            "elements": [
+              {
+                "__className__": "serverpod.IndexElementDefinition",
+                "type": 0,
+                "definition": "userIdentifier"
+              },
+              {
+                "__className__": "serverpod.IndexElementDefinition",
+                "type": 0,
+                "definition": "roleId"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": false
+          }
+        ],
+        "deleteIndexes": [
+          "serverpod_rbac_user_role_scope_idx"
+        ],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"scope\" of table \"serverpod_rbac_user_role\" will be dropped.",
+            "table": "serverpod_rbac_user_role",
+            "columns": [
+              "scope"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "uniqueIndexCreated",
+            "message": "Unique index \"serverpod_rbac_user_role_user_role_idx\" is added to table \"serverpod_rbac_user_role\". If there are existing rows with duplicate values, this migration will fail.",
+            "table": "serverpod_rbac_user_role",
+            "columns": [
+              "userIdentifier",
+              "roleId"
+            ],
+            "destrucive": false
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "tableDropped",
+      "message": "Table \"serverpod_rbac_object_permission\" will be dropped.",
+      "table": "serverpod_rbac_object_permission",
+      "columns": [],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"scope\" of table \"serverpod_rbac_audit_log\" will be dropped.",
+      "table": "serverpod_rbac_audit_log",
+      "columns": [
+        "scope"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"objectId\" of table \"serverpod_rbac_audit_log\" will be dropped.",
+      "table": "serverpod_rbac_audit_log",
+      "columns": [
+        "objectId"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"scope\" of table \"serverpod_rbac_user_permission\" will be dropped.",
+      "table": "serverpod_rbac_user_permission",
+      "columns": [
+        "scope"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "uniqueIndexCreated",
+      "message": "Unique index \"serverpod_rbac_user_perm_user_perm_idx\" is added to table \"serverpod_rbac_user_permission\". If there are existing rows with duplicate values, this migration will fail.",
+      "table": "serverpod_rbac_user_permission",
+      "columns": [
+        "userIdentifier",
+        "permissionId"
+      ],
+      "destrucive": false
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"scope\" of table \"serverpod_rbac_user_role\" will be dropped.",
+      "table": "serverpod_rbac_user_role",
+      "columns": [
+        "scope"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "uniqueIndexCreated",
+      "message": "Unique index \"serverpod_rbac_user_role_user_role_idx\" is added to table \"serverpod_rbac_user_role\". If there are existing rows with duplicate values, this migration will fail.",
+      "table": "serverpod_rbac_user_role",
+      "columns": [
+        "userIdentifier",
+        "roleId"
+      ],
+      "destrucive": false
+    }
+  ],
+  "migrationApiVersion": 1
+}

@@ -1,0 +1,9 @@
+class: RbacAbacResult
+fields:
+  userIdentifier: String
+  permission: String?
+  roleName: String?
+  isAllowed: bool
+  hasDomains: bool
+  domains: List<String>
+  isUnrestricted: bool

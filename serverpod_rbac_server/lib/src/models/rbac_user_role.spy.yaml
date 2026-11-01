@@ -1,0 +1,17 @@
+class: RbacUserRole
+table: serverpod_rbac_user_role
+fields:
+  userIdentifier: String
+  role: RbacRole?, relation(name=role_user_roles, onDelete=Cascade)
+  domain: String?
+  createdAt: DateTime, default=now
+
+indexes:
+  serverpod_rbac_user_role_user_role_domain_idx:
+    fields: userIdentifier, roleId, domain
+    unique: true
+    nulls_distinct: false
+  serverpod_rbac_user_role_user_idx:
+    fields: userIdentifier
+  serverpod_rbac_user_role_domain_idx:
+    fields: domain

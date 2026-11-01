@@ -1,0 +1,14 @@
+class: RbacPermission
+table: serverpod_rbac_permission
+fields:
+  resource: String
+  codename: String
+  name: String
+  description: String?
+  roles: List<RbacRolePermission>?, relation(name=permission_roles)
+  createdAt: DateTime, default=now
+
+indexes:
+  serverpod_rbac_perm_res_code_idx:
+    fields: resource, codename
+    unique: true

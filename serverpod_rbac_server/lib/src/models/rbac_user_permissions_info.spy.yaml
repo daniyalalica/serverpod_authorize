@@ -1,0 +1,7 @@
+class: RbacUserPermissionsInfo
+fields:
+  userIdentifier: String
+  isSuperuser: bool
+  roles: List<String>
+  permissions: List<String>
+  domains: List<String>

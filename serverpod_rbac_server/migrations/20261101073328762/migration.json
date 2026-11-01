@@ -1,0 +1,114 @@
+{
+  "__className__": "serverpod.DatabaseMigration",
+  "actions": [
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "serverpod_rbac_role_permission",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "_serverpodRbacPermissionRolesServerpodRbacPermissionId",
+          "_serverpodRbacRolePermissionsServerpodRbacRoleId"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [
+          "serverpod_rbac_role_permission_fk_2",
+          "serverpod_rbac_role_permission_fk_3"
+        ],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"_serverpodRbacPermissionRolesServerpodRbacPermissionId\" of table \"serverpod_rbac_role_permission\" will be dropped.",
+            "table": "serverpod_rbac_role_permission",
+            "columns": [
+              "_serverpodRbacPermissionRolesServerpodRbacPermissionId"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"_serverpodRbacRolePermissionsServerpodRbacRoleId\" of table \"serverpod_rbac_role_permission\" will be dropped.",
+            "table": "serverpod_rbac_role_permission",
+            "columns": [
+              "_serverpodRbacRolePermissionsServerpodRbacRoleId"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "serverpod_rbac_user_role",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "_serverpodRbacRoleUserrolesServerpodRbacRoleId"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [
+          "serverpod_rbac_user_role_fk_1"
+        ],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"_serverpodRbacRoleUserrolesServerpodRbacRoleId\" of table \"serverpod_rbac_user_role\" will be dropped.",
+            "table": "serverpod_rbac_user_role",
+            "columns": [
+              "_serverpodRbacRoleUserrolesServerpodRbacRoleId"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"_serverpodRbacPermissionRolesServerpodRbacPermissionId\" of table \"serverpod_rbac_role_permission\" will be dropped.",
+      "table": "serverpod_rbac_role_permission",
+      "columns": [
+        "_serverpodRbacPermissionRolesServerpodRbacPermissionId"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"_serverpodRbacRolePermissionsServerpodRbacRoleId\" of table \"serverpod_rbac_role_permission\" will be dropped.",
+      "table": "serverpod_rbac_role_permission",
+      "columns": [
+        "_serverpodRbacRolePermissionsServerpodRbacRoleId"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"_serverpodRbacRoleUserrolesServerpodRbacRoleId\" of table \"serverpod_rbac_user_role\" will be dropped.",
+      "table": "serverpod_rbac_user_role",
+      "columns": [
+        "_serverpodRbacRoleUserrolesServerpodRbacRoleId"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}
